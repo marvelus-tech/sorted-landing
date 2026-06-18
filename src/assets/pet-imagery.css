@@ -1,0 +1,67 @@
+/* ── Pet Imagery Placeholders ── */
+
+/* Hero background - will be replaced with actual image */
+.hero-bg {
+  background: linear-gradient(135deg, var(--sage) 0%, var(--sage-dark) 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-bg::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -20%;
+  width: 80%;
+  height: 150%;
+  background: radial-gradient(ellipse, rgba(245, 241, 232, 0.1) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* Step card images */
+.step-image {
+  width: 100%;
+  height: 200px;
+  background: linear-gradient(135deg, var(--cream-dark) 0%, var(--cream) 100%);
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+}
+
+/* Feature card images */
+.feature-image {
+  width: 100%;
+  height: 160px;
+  background: linear-gradient(135deg, var(--sage-10) 0%, var(--sage-5) 100%);
+  border-radius: 12px;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+}
+
+/* CTA background */
+.cta-bg {
+  background: linear-gradient(135deg, var(--ink) 0%, #2a2a2a 100%);
+  position: relative;
+}
+
+.cta-bg::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 200px;
+  background: linear-gradient(to top, rgba(124, 139, 111, 0.1) 0%, transparent 100%);
+  pointer-events: none;
+}
+
+/* Placeholder paw print pattern */
+.paw-pattern {
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%237C8B6F' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}

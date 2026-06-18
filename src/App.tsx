@@ -19,6 +19,8 @@ import {
   Heart
 } from 'lucide-react'
 
+import './assets/pet-imagery.css'
+
 /* ── Animations ── */
 const fadeInUp = {
   hidden: { opacity: 0, y: 30 },
