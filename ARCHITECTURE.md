@@ -430,11 +430,10 @@ Fraud Prevention:
 
 ## Questions for Cody
 
-1. **Fulfillment**: Do you want to handle payments/ordering directly, or use affiliate links initially?
-2. **Geography**: US-only launch, or Australia first?
-3. **Vendors**: Which stores do you want to prioritize? (Amazon, Chewy, local?)
-4. **Autopilot Risk**: What's the maximum order value you're comfortable auto-approving?
-5. **Smart Feeders**: Integrate with existing devices (SureFeed, PetSafe) or build your own?
+1. **Fulfillment**: ✅ RESEARCHED — See `IMPLEMENTATION_RESEARCH.md` for affiliate vs direct comparison
+2. **Launch Market**: US or Australia first?
+3. **Autopilot Limits**: Max $/order you're comfortable auto-approving?
+4. **Smart Feeders**: ✅ SKIP FOR MVP — "Coming soon" with waitlist
 
 ---
 
