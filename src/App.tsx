@@ -5,19 +5,22 @@ import {
   Brain,
   MessageCircle,
   Zap,
-  Shield,
-  TrendingUp,
   ChevronRight,
-  Star,
   Check,
   ArrowRight,
   Menu,
   X,
   Bot,
-  ShoppingBag,
   Clock,
   Heart
 } from 'lucide-react'
+
+import predictiveIntelligence from './assets/features/predictive-intelligence.png'
+import smartPriceComparison from './assets/features/smart-price-comparison.png'
+import trustFirstDesign from './assets/features/trust-first-design.png'
+import intelligentBundling from './assets/features/intelligent-bundling.png'
+import flexibleScheduling from './assets/features/flexible-scheduling.png'
+import dietHealthTracking from './assets/features/diet-health-tracking.png'
 
 import './assets/pet-imagery.css'
 
@@ -316,32 +319,32 @@ function LifestyleShowcase() {
 function Features() {
   const features = [
     {
-      icon: Brain,
+      image: predictiveIntelligence,
       title: "Predictive Intelligence",
       description: "Our AI learns your pet's consumption patterns and predicts depletion before it happens. No more emergency pet store runs."
     },
     {
-      icon: ShoppingBag,
+      image: smartPriceComparison,
       title: "Smart Price Comparison",
       description: "We check Amazon, Chewy, Petco, and local retailers to find the best price on your pet's exact food — every single order."
     },
     {
-      icon: Shield,
+      image: trustFirstDesign,
       title: "Trust-First Design",
       description: "Start in approval mode. Every order shows vendor comparison and savings. Unlock full autopilot after 20 approvals."
     },
     {
-      icon: TrendingUp,
+      image: intelligentBundling,
       title: "Intelligent Bundling",
       description: "Automatically combine orders to hit free shipping thresholds. Save on flea meds, treats, and supplements together."
     },
     {
-      icon: Clock,
+      image: flexibleScheduling,
       title: "Flexible Scheduling",
       description: "Going on vacation? Pause deliveries. Switching brands? Just say so. SORTED adapts to your life, not the other way around."
     },
     {
-      icon: Star,
+      image: dietHealthTracking,
       title: "Diet Health Tracking",
       description: "Log allergies, weight changes, and vet recommendations. SORTED ensures you never accidentally order the wrong formula."
     }
@@ -375,8 +378,12 @@ function Features() {
               transition={{ delay: i * 0.1 }}
               className="bg-white rounded-2xl p-8 hover-lift"
             >
-              <div className="w-10 h-10 bg-sage/10 rounded-lg flex items-center justify-center mb-5">
-                <feature.icon className="w-5 h-5 text-sage" />
+              <div className="h-40 rounded-xl overflow-hidden mb-5 bg-cream flex items-center justify-center">
+                <img
+                  src={feature.image}
+                  alt={feature.title}
+                  className="w-full h-full object-contain p-2"
+                />
               </div>
               <h3 className="font-display font-600 text-lg text-ink mb-3">{feature.title}</h3>
               <p className="text-sm text-ink-muted leading-relaxed">{feature.description}</p>
