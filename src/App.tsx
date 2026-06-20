@@ -169,55 +169,13 @@ function Hero() {
           transition={{ delay: 0.3, duration: 0.8, ease: "easeOut" }}
           className="relative"
         >
-          <div className="relative bg-white rounded-3xl shadow-2xl p-6 border border-cream-dark">
-            <div className="flex items-center gap-3 mb-4 pb-4 border-b border-cream-dark">
-              <div className="w-10 h-10 bg-sage rounded-full flex items-center justify-center">
-                <Dog className="w-6 h-6 text-cream" />
-              </div>
-              <div>
-                <p className="font-display font-600 text-ink">SORTED Agent</p>
-                <p className="text-xs text-ink-muted">Always online</p>
-              </div>
-              <div className="ml-auto flex gap-1">
-                <div className="w-2 h-2 bg-sage rounded-full animate-pulse" />
-                <div className="w-2 h-2 bg-sage/50 rounded-full animate-pulse delay-75" />
-                <div className="w-2 h-2 bg-sage/25 rounded-full animate-pulse delay-150" />
-              </div>
-            </div>
-            
-            <div className="space-y-4">
-              <div className="bg-cream rounded-2xl p-4 max-w-[85%]">
-                <p className="text-sm text-ink">Hey! Max's kibble is running low — about 4 days left. Want me to handle it?</p>
-              </div>
-              
-              <div className="bg-sage/10 rounded-2xl p-4 max-w-[85%] ml-auto">
-                <p className="text-sm text-ink">Yes please! Same as last time?</p>
-              </div>
-              
-              <div className="bg-cream rounded-2xl p-4 max-w-[90%]">
-                <p className="text-sm text-ink mb-3">Found the best deal:</p>
-                <div className="bg-white rounded-xl p-3 mb-3 border border-cream-dark">
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="text-sm font-medium text-ink">Blue Buffalo Adult Chicken</span>
-                    <span className="text-sm font-600 text-sage">$42.99</span>
-                  </div>
-                  <div className="flex justify-between items-center text-xs text-ink-muted">
-                    <span>Amazon Prime • Arrives Thursday</span>
-                    <span className="line-through">$48.99</span>
-                  </div>
-                </div>
-                <p className="text-xs text-ink-muted">Also bundled: Dental chews (save $5.99 on shipping)</p>
-              </div>
-              
-              <div className="flex gap-2">
-                <button className="flex-1 bg-ink text-cream py-3 rounded-xl text-sm font-medium hover:bg-ink-light transition-colors">
-                  ✓ Approve
-                </button>
-                <button className="flex-1 bg-cream-dark text-ink py-3 rounded-xl text-sm font-medium hover:bg-cream transition-colors">
-                  ✎ Modify
-                </button>
-              </div>
-            </div>
+          <div className="relative rounded-3xl overflow-hidden shadow-2xl border border-cream-dark">
+            <img 
+              src="/assets/hero.png" 
+              alt="Premium pet food with fresh ingredients and mobile ordering"
+              className="w-full h-auto object-cover"
+              loading="eager"
+            />
           </div>
           
           {/* Floating badges */}
@@ -311,6 +269,45 @@ function HowItWorks() {
             </motion.div>
           ))}
         </div>
+      </div>
+    </section>
+  )
+}
+
+function LifestyleShowcase() {
+  return (
+    <section className="py-24 bg-white">
+      <div className="max-w-6xl mx-auto px-6">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center mb-12"
+        >
+          <span className="text-sage font-mono-display text-sm uppercase tracking-wider">Quality First</span>
+          <h2 className="font-display font-700 text-4xl md:text-5xl text-ink mt-4 mb-4">
+            Only the best for your best friend
+          </h2>
+          <p className="text-lg text-ink-muted max-w-2xl mx-auto">
+            We track premium brands, fresh ingredients, and nutritional value — so you don't have to.
+          </p>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
+          className="relative rounded-3xl overflow-hidden shadow-2xl"
+        >
+          <img 
+            src="/assets/hero-flatlay.png" 
+            alt="Premium pet food ingredients including fresh meat, vegetables, and quality kibble"
+            className="w-full h-auto object-cover"
+            loading="lazy"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-ink/20 to-transparent" />
+        </motion.div>
       </div>
     </section>
   )
@@ -712,6 +709,7 @@ function App() {
       <Navbar />
       <Hero />
       <HowItWorks />
+      <LifestyleShowcase />
       <Features />
       <Pricing />
       <FAQ />
