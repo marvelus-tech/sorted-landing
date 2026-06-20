@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
 import {
   Dog,
   Brain,
@@ -13,21 +13,23 @@ import {
   ArrowRight,
   Menu,
   X,
-  Bot,
   ShoppingBag,
   Clock,
-  Heart
+  Heart,
+  Sparkles,
+  PawPrint,
+  ArrowUpRight
 } from 'lucide-react'
 
-import './assets/pet-imagery.css'
+import './styles.css'
 
-/* ── Animations ── */
+/* ── Animation Variants ── */
 const fadeInUp = {
-  hidden: { opacity: 0, y: 30 },
+  hidden: { opacity: 0, y: 40 },
   visible: (i: number) => ({
     opacity: 1,
     y: 0,
-    transition: { delay: i * 0.1, duration: 0.6, ease: "easeOut" as const }
+    transition: { delay: i * 0.12, duration: 0.7, ease: "easeOut" as const }
   })
 }
 
@@ -48,30 +50,30 @@ function Navbar() {
   }, [])
 
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'bg-cream/90 backdrop-blur-md shadow-sm' : ''}`}>
-      <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-sage rounded-lg flex items-center justify-center">
-            <Dog className="w-5 h-5 text-cream" />
+    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${scrolled ? 'bg-canvas/80 backdrop-blur-xl shadow-[0_1px_0_rgba(196,184,168,0.2)]' : ''}`}>
+      <div className="max-w-6xl mx-auto px-6 py-5 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 bg-terracotta rounded-xl flex items-center justify-center">
+            <PawPrint className="w-5 h-5 text-canvas" strokeWidth={2.5} />
           </div>
-          <span className="font-display font-700 text-xl tracking-tight text-ink">SORTED</span>
+          <span className="font-display text-2xl font-semibold tracking-tight text-ink">Sorted</span>
         </div>
         
-        <div className="hidden md:flex items-center gap-8">
-          <a href="#how-it-works" className="text-sm font-medium text-ink-muted hover:text-ink transition-colors">How it works</a>
-          <a href="#features" className="text-sm font-medium text-ink-muted hover:text-ink transition-colors">Features</a>
-          <a href="#pricing" className="text-sm font-medium text-ink-muted hover:text-ink transition-colors">Pricing</a>
-          <a href="#faq" className="text-sm font-medium text-ink-muted hover:text-ink transition-colors">FAQ</a>
+        <div className="hidden md:flex items-center gap-10">
+          <a href="#how-it-works" className="text-sm font-medium text-ink-muted hover:text-ink transition-colors underline-animate">How it works</a>
+          <a href="#features" className="text-sm font-medium text-ink-muted hover:text-ink transition-colors underline-animate">Features</a>
+          <a href="#pricing" className="text-sm font-medium text-ink-muted hover:text-ink transition-colors underline-animate">Pricing</a>
+          <a href="#faq" className="text-sm font-medium text-ink-muted hover:text-ink transition-colors underline-animate">FAQ</a>
         </div>
 
-        <div className="hidden md:flex items-center gap-3">
+        <div className="hidden md:flex items-center gap-4">
           <button className="text-sm font-medium text-ink-muted hover:text-ink transition-colors">Sign in</button>
-          <button className="bg-ink text-cream px-5 py-2.5 rounded-full text-sm font-medium hover:bg-ink-light transition-colors">
+          <button className="bg-ink text-canvas px-6 py-2.5 rounded-full text-sm font-medium hover:bg-ink-soft transition-all duration-300 hover:shadow-warm">
             Get Started
           </button>
         </div>
 
-        <button className="md:hidden" onClick={() => setIsOpen(!isOpen)}>
+        <button className="md:hidden p-2" onClick={() => setIsOpen(!isOpen)}>
           {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
         </button>
       </div>
@@ -82,14 +84,15 @@ function Navbar() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-cream border-t border-cream-dark"
+            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            className="md:hidden bg-canvas border-t border-linen"
           >
-            <div className="px-6 py-4 flex flex-col gap-4">
-              <a href="#how-it-works" className="text-sm font-medium text-ink-muted">How it works</a>
-              <a href="#features" className="text-sm font-medium text-ink-muted">Features</a>
-              <a href="#pricing" className="text-sm font-medium text-ink-muted">Pricing</a>
-              <a href="#faq" className="text-sm font-medium text-ink-muted">FAQ</a>
-              <button className="bg-ink text-cream px-5 py-2.5 rounded-full text-sm font-medium w-full">
+            <div className="px-6 py-6 flex flex-col gap-4">
+              <a href="#how-it-works" className="text-sm font-medium text-ink-muted py-2">How it works</a>
+              <a href="#features" className="text-sm font-medium text-ink-muted py-2">Features</a>
+              <a href="#pricing" className="text-sm font-medium text-ink-muted py-2">Pricing</a>
+              <a href="#faq" className="text-sm font-medium text-ink-muted py-2">FAQ</a>
+              <button className="bg-ink text-canvas px-6 py-3 rounded-full text-sm font-medium w-full mt-2">
                 Get Started
               </button>
             </div>
@@ -101,82 +104,111 @@ function Navbar() {
 }
 
 function Hero() {
+  const { scrollYProgress } = useScroll()
+  const y = useTransform(scrollYProgress, [0, 1], [0, -100])
+  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0])
+
   return (
-    <section className="relative min-h-screen flex items-center pt-20 overflow-hidden">
-      {/* Background decoration */}
-      <div className="absolute top-20 right-0 w-96 h-96 bg-sage/10 rounded-full blur-3xl" />
-      <div className="absolute bottom-0 left-0 w-72 h-72 bg-coral/10 rounded-full blur-3xl" />
+    <section className="relative min-h-screen flex items-center pt-24 overflow-hidden">
+      {/* Atmospheric background elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <motion.div 
+          style={{ y, opacity }}
+          className="absolute top-20 right-[-10%] w-[600px] h-[600px] bg-blush-deep/40 rounded-full blur-[100px]" 
+        />
+        <div className="absolute bottom-[-10%] left-[-5%] w-[500px] h-[500px] bg-cream-warm/60 rounded-full blur-[80px]" />
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-linen/30 rounded-full blur-[120px]" />
+      </div>
       
-      <div className="max-w-6xl mx-auto px-6 py-20 grid md:grid-cols-2 gap-12 items-center">
+      {/* Decorative line */}
+      <div className="absolute top-32 left-8 w-px h-32 bg-gradient-to-b from-terracotta/40 to-transparent hidden lg:block" />
+      
+      <div className="max-w-6xl mx-auto px-6 py-20 grid lg:grid-cols-2 gap-16 items-center relative z-10">
         <motion.div
           variants={staggerContainer}
           initial="hidden"
           animate="visible"
+          className="order-2 lg:order-1"
         >
-          <motion.div variants={fadeInUp} custom={0} className="inline-flex items-center gap-2 bg-sage/10 text-sage-dark px-4 py-2 rounded-full text-sm font-medium mb-6">
-            <Bot className="w-4 h-4" />
+          <motion.div 
+            variants={fadeInUp} 
+            custom={0} 
+            className="inline-flex items-center gap-2.5 bg-blush text-terracotta-dark px-5 py-2.5 rounded-full text-sm font-medium mb-8 border border-terracotta/10"
+          >
+            <Sparkles className="w-4 h-4" />
             <span>AI-Powered Pet Care</span>
           </motion.div>
           
           <motion.h1
             variants={fadeInUp}
             custom={1}
-            className="font-display font-700 text-5xl md:text-7xl leading-[0.95] tracking-tight text-ink mb-6"
+            className="font-display text-5xl md:text-7xl lg:text-[5.5rem] leading-[0.95] tracking-tight text-ink mb-8"
           >
-            Your pet's life.
+            Your pet's life,
             <br />
-            <span className="gradient-text">Sorted.</span>
+            <span className="gradient-text italic">beautifully sorted.</span>
           </motion.h1>
           
           <motion.p
             variants={fadeInUp}
             custom={2}
-            className="text-lg text-ink-muted leading-relaxed mb-8 max-w-lg"
+            className="text-lg text-ink-muted leading-relaxed mb-10 max-w-lg font-body"
           >
             Never run out of kibble again. SORTED predicts what your pet needs, 
-            finds the best price, and orders it — all through a simple Telegram message.
+            finds the best price, and orders it — all through a simple message.
           </motion.p>
           
           <motion.div variants={fadeInUp} custom={3} className="flex flex-col sm:flex-row gap-4">
-            <button className="bg-ink text-cream px-8 py-4 rounded-full text-base font-medium hover:bg-ink-light transition-all hover:shadow-lg flex items-center justify-center gap-2">
+            <button className="bg-ink text-canvas px-8 py-4 rounded-full text-base font-medium hover:bg-ink-soft transition-all duration-300 hover:shadow-warm-lg flex items-center justify-center gap-2 group">
               Start Free on Telegram
-              <ArrowRight className="w-5 h-5" />
+              <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
             </button>
-            <button className="border-2 border-ink/20 text-ink px-8 py-4 rounded-full text-base font-medium hover:border-ink/40 transition-colors">
+            <button className="border-2 border-ink/10 text-ink px-8 py-4 rounded-full text-base font-medium hover:border-ink/30 transition-all duration-300 flex items-center justify-center gap-2 group">
               See How It Works
+              <ArrowUpRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
             </button>
           </motion.div>
           
-          <motion.div variants={fadeInUp} custom={4} className="flex items-center gap-6 mt-10 text-sm text-ink-muted">
+          <motion.div variants={fadeInUp} custom={4} className="flex items-center gap-8 mt-12 text-sm text-ink-muted">
             <div className="flex items-center gap-2">
-              <Check className="w-4 h-4 text-sage" />
+              <div className="w-5 h-5 rounded-full bg-sage/15 flex items-center justify-center">
+                <Check className="w-3 h-3 text-sage" />
+              </div>
               <span>No credit card</span>
             </div>
             <div className="flex items-center gap-2">
-              <Check className="w-4 h-4 text-sage" />
+              <div className="w-5 h-5 rounded-full bg-sage/15 flex items-center justify-center">
+                <Check className="w-3 h-3 text-sage" />
+              </div>
               <span>Cancel anytime</span>
             </div>
             <div className="flex items-center gap-2">
-              <Check className="w-4 h-4 text-sage" />
-              <span>Free forever plan</span>
+              <div className="w-5 h-5 rounded-full bg-sage/15 flex items-center justify-center">
+                <Check className="w-3 h-3 text-sage" />
+              </div>
+              <span>Free forever</span>
             </div>
           </motion.div>
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.3, duration: 0.8, ease: "easeOut" }}
-          className="relative"
+          initial={{ opacity: 0, scale: 0.9, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          transition={{ delay: 0.4, duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+          className="relative order-1 lg:order-2"
         >
-          <div className="relative bg-white rounded-3xl shadow-2xl p-6 border border-cream-dark">
-            <div className="flex items-center gap-3 mb-4 pb-4 border-b border-cream-dark">
-              <div className="w-10 h-10 bg-sage rounded-full flex items-center justify-center">
-                <Dog className="w-6 h-6 text-cream" />
+          {/* Main chat card */}
+          <div className="relative bg-white rounded-[2rem] shadow-warm-lg p-6 md:p-8 border border-linen/50">
+            <div className="flex items-center gap-4 mb-6 pb-6 border-b border-linen/60">
+              <div className="w-12 h-12 bg-gradient-to-br from-terracotta to-terracotta-dark rounded-2xl flex items-center justify-center shadow-warm">
+                <Dog className="w-6 h-6 text-canvas" />
               </div>
               <div>
-                <p className="font-display font-600 text-ink">SORTED Agent</p>
-                <p className="text-xs text-ink-muted">Always online</p>
+                <p className="font-display font-semibold text-lg text-ink">Sorted Agent</p>
+                <p className="text-xs text-ink-muted flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 bg-sage rounded-full animate-pulse" />
+                  Always online
+                </p>
               </div>
               <div className="ml-auto flex gap-1">
                 <div className="w-2 h-2 bg-sage rounded-full animate-pulse" />
@@ -186,34 +218,34 @@ function Hero() {
             </div>
             
             <div className="space-y-4">
-              <div className="bg-cream rounded-2xl p-4 max-w-[85%]">
-                <p className="text-sm text-ink">Hey! Max's kibble is running low — about 4 days left. Want me to handle it?</p>
+              <div className="bg-cream rounded-2xl rounded-tl-sm p-5 max-w-[85%]">
+                <p className="text-sm text-ink leading-relaxed">Hey! Max's kibble is running low — about 4 days left. Want me to handle it?</p>
               </div>
               
-              <div className="bg-sage/10 rounded-2xl p-4 max-w-[85%] ml-auto">
-                <p className="text-sm text-ink">Yes please! Same as last time?</p>
+              <div className="bg-terracotta/8 rounded-2xl rounded-tr-sm p-5 max-w-[85%] ml-auto">
+                <p className="text-sm text-ink leading-relaxed">Yes please! Same as last time?</p>
               </div>
               
-              <div className="bg-cream rounded-2xl p-4 max-w-[90%]">
-                <p className="text-sm text-ink mb-3">Found the best deal:</p>
-                <div className="bg-white rounded-xl p-3 mb-3 border border-cream-dark">
+              <div className="bg-cream rounded-2xl rounded-tl-sm p-5 max-w-[90%]">
+                <p className="text-sm text-ink mb-4 font-medium">Found the best deal:</p>
+                <div className="bg-white rounded-xl p-4 mb-3 border border-linen/60 shadow-sm">
                   <div className="flex justify-between items-center mb-2">
                     <span className="text-sm font-medium text-ink">Blue Buffalo Adult Chicken</span>
-                    <span className="text-sm font-600 text-sage">$42.99</span>
+                    <span className="text-sm font-semibold text-terracotta">$42.99</span>
                   </div>
                   <div className="flex justify-between items-center text-xs text-ink-muted">
                     <span>Amazon Prime • Arrives Thursday</span>
-                    <span className="line-through">$48.99</span>
+                    <span className="line-through text-ink-faint">$48.99</span>
                   </div>
                 </div>
                 <p className="text-xs text-ink-muted">Also bundled: Dental chews (save $5.99 on shipping)</p>
               </div>
               
-              <div className="flex gap-2">
-                <button className="flex-1 bg-ink text-cream py-3 rounded-xl text-sm font-medium hover:bg-ink-light transition-colors">
+              <div className="flex gap-3 pt-2">
+                <button className="flex-1 bg-ink text-canvas py-3.5 rounded-xl text-sm font-medium hover:bg-ink-soft transition-colors">
                   ✓ Approve
                 </button>
-                <button className="flex-1 bg-cream-dark text-ink py-3 rounded-xl text-sm font-medium hover:bg-cream transition-colors">
+                <button className="flex-1 bg-cream-warm text-ink py-3.5 rounded-xl text-sm font-medium hover:bg-linen transition-colors">
                   ✎ Modify
                 </button>
               </div>
@@ -222,20 +254,25 @@ function Hero() {
           
           {/* Floating badges */}
           <motion.div
-            animate={{ y: [0, -10, 0] }}
-            transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
-            className="absolute -top-4 -right-4 bg-coral text-white px-4 py-2 rounded-full text-sm font-medium shadow-lg"
+            animate={{ y: [0, -12, 0] }}
+            transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
+            className="absolute -top-6 -right-4 bg-gradient-to-br from-terracotta to-terracotta-dark text-canvas px-5 py-2.5 rounded-2xl text-sm font-medium shadow-warm-lg"
           >
-            Save 12%
+            <span className="flex items-center gap-1.5">
+              <TrendingUp className="w-4 h-4" />
+              Save 12%
+            </span>
           </motion.div>
           
           <motion.div
             animate={{ y: [0, 10, 0] }}
-            transition={{ repeat: Infinity, duration: 4, ease: "easeInOut", delay: 1 }}
-            className="absolute -bottom-4 -left-4 bg-sage text-cream px-4 py-2 rounded-full text-sm font-medium shadow-lg"
+            transition={{ repeat: Infinity, duration: 5, ease: "easeInOut", delay: 1 }}
+            className="absolute -bottom-6 -left-4 bg-white text-ink px-5 py-2.5 rounded-2xl text-sm font-medium shadow-warm border border-linen/50"
           >
-            <Clock className="w-4 h-4 inline mr-1" />
-            2 min setup
+            <span className="flex items-center gap-1.5">
+              <Clock className="w-4 h-4 text-sage" />
+              2 min setup
+            </span>
           </motion.div>
         </motion.div>
       </div>
@@ -268,19 +305,23 @@ function HowItWorks() {
   ]
 
   return (
-    <section id="how-it-works" className="py-24 bg-white">
+    <section id="how-it-works" className="py-32 bg-white relative">
+      {/* Subtle background decoration */}
+      <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-linen to-transparent" />
+      
       <div className="max-w-6xl mx-auto px-6">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mb-16"
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+          className="text-center mb-20"
         >
-          <span className="text-sage font-mono-display text-sm uppercase tracking-wider">How It Works</span>
-          <h2 className="font-display font-700 text-4xl md:text-5xl text-ink mt-4 mb-4">
-            From chaos to calm in 4 steps
+          <span className="text-terracotta font-mono-display text-sm uppercase tracking-widest">How It Works</span>
+          <h2 className="font-display text-4xl md:text-5xl lg:text-6xl text-ink mt-5 mb-6 leading-tight">
+            From chaos to calm
           </h2>
-          <p className="text-lg text-ink-muted max-w-2xl mx-auto">
+          <p className="text-lg text-ink-muted max-w-xl mx-auto leading-relaxed">
             No apps to download. No passwords to remember. Just Telegram — the app you already use.
           </p>
         </motion.div>
@@ -289,23 +330,28 @@ function HowItWorks() {
           {steps.map((step, i) => (
             <motion.div
               key={i}
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.15 }}
-              className="relative"
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ delay: i * 0.15, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+              className="relative group"
             >
-              <div className="bg-cream rounded-2xl p-8 hover-lift h-full">
-                <div className="w-12 h-12 bg-sage/10 rounded-xl flex items-center justify-center mb-6">
-                  <step.icon className="w-6 h-6 text-sage" />
+              <div className="bg-cream rounded-[1.5rem] p-8 hover-lift h-full relative overflow-hidden">
+                {/* Large step number */}
+                <span className="step-number">0{i + 1}</span>
+                
+                <div className="relative z-10">
+                  <div className="w-12 h-12 bg-terracotta/10 rounded-xl flex items-center justify-center mb-6">
+                    <step.icon className="w-6 h-6 text-terracotta" strokeWidth={1.5} />
+                  </div>
+                  <h3 className="font-display text-xl text-ink mb-3 font-semibold">{step.title}</h3>
+                  <p className="text-sm text-ink-muted leading-relaxed">{step.description}</p>
                 </div>
-                <div className="font-mono-display text-xs text-sage mb-2">0{i + 1}</div>
-                <h3 className="font-display font-600 text-xl text-ink mb-3">{step.title}</h3>
-                <p className="text-sm text-ink-muted leading-relaxed">{step.description}</p>
               </div>
+              
               {i < 3 && (
                 <div className="hidden lg:block absolute top-1/2 -right-4 transform -translate-y-1/2 z-10">
-                  <ChevronRight className="w-6 h-6 text-cream-dark" />
+                  <ChevronRight className="w-5 h-5 text-taupe" />
                 </div>
               )}
             </motion.div>
@@ -351,19 +397,22 @@ function Features() {
   ]
 
   return (
-    <section id="features" className="py-24 bg-cream">
+    <section id="features" className="py-32 bg-cream relative">
+      <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-linen to-transparent" />
+      
       <div className="max-w-6xl mx-auto px-6">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mb-16"
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+          className="text-center mb-20"
         >
-          <span className="text-sage font-mono-display text-sm uppercase tracking-wider">Features</span>
-          <h2 className="font-display font-700 text-4xl md:text-5xl text-ink mt-4 mb-4">
+          <span className="text-terracotta font-mono-display text-sm uppercase tracking-widest">Features</span>
+          <h2 className="font-display text-4xl md:text-5xl lg:text-6xl text-ink mt-5 mb-6 leading-tight">
             Smarter than any subscription
           </h2>
-          <p className="text-lg text-ink-muted max-w-2xl mx-auto">
+          <p className="text-lg text-ink-muted max-w-xl mx-auto leading-relaxed">
             Subscriptions are just calendars. SORTED is a brain that thinks, compares, and optimizes.
           </p>
         </motion.div>
@@ -372,16 +421,16 @@ function Features() {
           {features.map((feature, i) => (
             <motion.div
               key={i}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
-              className="bg-white rounded-2xl p-8 hover-lift"
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ delay: i * 0.08, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+              className="bg-white rounded-[1.5rem] p-8 hover-lift group"
             >
-              <div className="w-10 h-10 bg-sage/10 rounded-lg flex items-center justify-center mb-5">
-                <feature.icon className="w-5 h-5 text-sage" />
+              <div className="w-11 h-11 bg-terracotta/8 rounded-xl flex items-center justify-center mb-6 group-hover:bg-terracotta/15 transition-colors">
+                <feature.icon className="w-5 h-5 text-terracotta" strokeWidth={1.5} />
               </div>
-              <h3 className="font-display font-600 text-lg text-ink mb-3">{feature.title}</h3>
+              <h3 className="font-display text-xl text-ink mb-3 font-semibold">{feature.title}</h3>
               <p className="text-sm text-ink-muted leading-relaxed">{feature.description}</p>
             </motion.div>
           ))}
@@ -442,19 +491,22 @@ function Pricing() {
   ]
 
   return (
-    <section id="pricing" className="py-24 bg-white">
+    <section id="pricing" className="py-32 bg-white relative">
+      <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-linen to-transparent" />
+      
       <div className="max-w-6xl mx-auto px-6">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mb-16"
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+          className="text-center mb-20"
         >
-          <span className="text-sage font-mono-display text-sm uppercase tracking-wider">Pricing</span>
-          <h2 className="font-display font-700 text-4xl md:text-5xl text-ink mt-4 mb-4">
+          <span className="text-terracotta font-mono-display text-sm uppercase tracking-widest">Pricing</span>
+          <h2 className="font-display text-4xl md:text-5xl lg:text-6xl text-ink mt-5 mb-6 leading-tight">
             Simple, transparent pricing
           </h2>
-          <p className="text-lg text-ink-muted max-w-2xl mx-auto">
+          <p className="text-lg text-ink-muted max-w-xl mx-auto leading-relaxed">
             Start free. Upgrade when you're ready to go full autopilot. No hidden fees, ever.
           </p>
         </motion.div>
@@ -463,41 +515,43 @@ function Pricing() {
           {plans.map((plan, i) => (
             <motion.div
               key={i}
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.15 }}
-              className={`relative rounded-2xl p-8 ${plan.popular ? 'bg-ink text-cream' : 'bg-cream border border-cream-dark'}`}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ delay: i * 0.15, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+              className={`relative rounded-[1.5rem] p-8 ${plan.popular ? 'bg-ink text-canvas' : 'bg-cream border border-linen/60'}`}
             >
               {plan.popular && (
-                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-coral text-white px-4 py-1 rounded-full text-xs font-medium">
+                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-terracotta to-terracotta-dark text-canvas px-5 py-1.5 rounded-full text-xs font-medium shadow-warm">
                   Most Popular
                 </div>
               )}
               
-              <h3 className="font-display font-600 text-xl mb-2">{plan.name}</h3>
-              <p className={`text-sm mb-6 ${plan.popular ? 'text-cream/70' : 'text-ink-muted'}`}>
+              <h3 className="font-display text-2xl mb-2 font-semibold">{plan.name}</h3>
+              <p className={`text-sm mb-8 ${plan.popular ? 'text-canvas/60' : 'text-ink-muted'}`}>
                 {plan.description}
               </p>
               
-              <div className="mb-6">
-                <span className="font-display font-700 text-4xl">{plan.price}</span>
-                {plan.period && <span className={`text-sm ${plan.popular ? 'text-cream/70' : 'text-ink-muted'}`}>{plan.period}</span>}
+              <div className="mb-8">
+                <span className="font-display text-5xl font-semibold">{plan.price}</span>
+                {plan.period && <span className={`text-sm ${plan.popular ? 'text-canvas/60' : 'text-ink-muted'}`}>{plan.period}</span>}
               </div>
               
-              <button className={`w-full py-3 rounded-full text-sm font-medium mb-8 transition-colors ${
+              <button className={`w-full py-3.5 rounded-full text-sm font-medium mb-8 transition-all duration-300 ${
                 plan.popular
-                  ? 'bg-cream text-ink hover:bg-cream-dark'
-                  : 'bg-ink text-cream hover:bg-ink-light'
+                  ? 'bg-canvas text-ink hover:bg-cream-warm'
+                  : 'bg-ink text-canvas hover:bg-ink-soft'
               }`}>
                 {plan.cta}
               </button>
               
-              <ul className="space-y-3">
+              <ul className="space-y-4">
                 {plan.features.map((feature, j) => (
                   <li key={j} className="flex items-start gap-3 text-sm">
-                    <Check className={`w-4 h-4 mt-0.5 flex-shrink-0 ${plan.popular ? 'text-sage-light' : 'text-sage'}`} />
-                    <span className={plan.popular ? 'text-cream/80' : 'text-ink-muted'}>{feature}</span>
+                    <div className={`w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 ${plan.popular ? 'bg-sage/30' : 'bg-sage/15'}`}>
+                      <Check className={`w-3 h-3 ${plan.popular ? 'text-sage-light' : 'text-sage'}`} />
+                    </div>
+                    <span className={plan.popular ? 'text-canvas/80' : 'text-ink-muted'}>{feature}</span>
                   </li>
                 ))}
               </ul>
@@ -540,16 +594,19 @@ function FAQ() {
   const [openIndex, setOpenIndex] = useState<number | null>(0)
 
   return (
-    <section id="faq" className="py-24 bg-cream">
+    <section id="faq" className="py-32 bg-cream relative">
+      <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-linen to-transparent" />
+      
       <div className="max-w-3xl mx-auto px-6">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mb-16"
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+          className="text-center mb-20"
         >
-          <span className="text-sage font-mono-display text-sm uppercase tracking-wider">FAQ</span>
-          <h2 className="font-display font-700 text-4xl md:text-5xl text-ink mt-4 mb-4">
+          <span className="text-terracotta font-mono-display text-sm uppercase tracking-widest">FAQ</span>
+          <h2 className="font-display text-4xl md:text-5xl lg:text-6xl text-ink mt-5 mb-6 leading-tight">
             Questions? Answered.
           </h2>
         </motion.div>
@@ -558,19 +615,19 @@ function FAQ() {
           {faqs.map((faq, i) => (
             <motion.div
               key={i}
-              initial={{ opacity: 0, y: 10 }}
+              initial={{ opacity: 0, y: 15 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: i * 0.05 }}
-              className="bg-white rounded-xl overflow-hidden"
+              transition={{ delay: i * 0.05, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+              className="bg-white rounded-2xl overflow-hidden border border-linen/40"
             >
               <button
                 onClick={() => setOpenIndex(openIndex === i ? null : i)}
-                className="w-full flex items-center justify-between p-6 text-left"
+                className="w-full flex items-center justify-between p-6 text-left group"
               >
-                <span className="font-display font-500 text-ink pr-4">{faq.q}</span>
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 transition-colors ${
-                  openIndex === i ? 'bg-ink text-cream' : 'bg-cream-dark text-ink'
+                <span className="font-display text-lg text-ink pr-4 font-medium group-hover:text-terracotta transition-colors">{faq.q}</span>
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-300 ${
+                  openIndex === i ? 'bg-ink text-canvas' : 'bg-cream-warm text-ink group-hover:bg-linen'
                 }`}>
                   {openIndex === i ? <X className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
                 </div>
@@ -581,7 +638,7 @@ function FAQ() {
                     initial={{ height: 0, opacity: 0 }}
                     animate={{ height: 'auto', opacity: 1 }}
                     exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.3 }}
+                    transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
                     className="overflow-hidden"
                   >
                     <p className="px-6 pb-6 text-sm text-ink-muted leading-relaxed">
@@ -600,32 +657,39 @@ function FAQ() {
 
 function CTA() {
   return (
-    <section className="py-24 bg-ink text-cream">
-      <div className="max-w-4xl mx-auto px-6 text-center">
+    <section className="py-32 bg-ink text-canvas relative overflow-hidden">
+      {/* Background decoration */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-terracotta/5 rounded-full blur-[100px]" />
+        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-sage/5 rounded-full blur-[80px]" />
+      </div>
+      
+      <div className="max-w-4xl mx-auto px-6 text-center relative z-10">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
         >
-          <div className="w-16 h-16 bg-sage rounded-2xl flex items-center justify-center mx-auto mb-8">
-            <Dog className="w-8 h-8 text-cream" />
+          <div className="w-16 h-16 bg-gradient-to-br from-terracotta to-terracotta-dark rounded-2xl flex items-center justify-center mx-auto mb-10 shadow-warm">
+            <Dog className="w-8 h-8 text-canvas" />
           </div>
           
-          <h2 className="font-display font-700 text-4xl md:text-5xl mb-6">
+          <h2 className="font-display text-4xl md:text-5xl lg:text-6xl mb-8 leading-tight">
             Ready to never worry about pet food again?
           </h2>
           
-          <p className="text-lg text-cream/70 mb-10 max-w-2xl mx-auto">
+          <p className="text-lg text-canvas/60 mb-12 max-w-2xl mx-auto leading-relaxed">
             Join 5,000+ pet parents who've sorted their pet's life. 
             Start free on Telegram — no credit card required.
           </p>
           
-          <button className="bg-cream text-ink px-10 py-4 rounded-full text-base font-medium hover:bg-cream-dark transition-all hover:shadow-lg inline-flex items-center gap-2">
+          <button className="bg-canvas text-ink px-10 py-4 rounded-full text-base font-medium hover:bg-cream-warm transition-all duration-300 hover:shadow-warm-lg inline-flex items-center gap-2 group">
             Start on Telegram
-            <ArrowRight className="w-5 h-5" />
+            <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
           </button>
           
-          <p className="text-sm text-cream/50 mt-6">
+          <p className="text-sm text-canvas/40 mt-8">
             Free forever plan available. Upgrade to Autopilot anytime.
           </p>
         </motion.div>
@@ -636,57 +700,57 @@ function CTA() {
 
 function Footer() {
   return (
-    <footer className="bg-cream-dark py-16">
+    <footer className="bg-cream-warm py-20">
       <div className="max-w-6xl mx-auto px-6">
-        <div className="grid md:grid-cols-4 gap-12 mb-12">
+        <div className="grid md:grid-cols-4 gap-12 mb-16">
           <div>
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 bg-sage rounded-lg flex items-center justify-center">
-                <Dog className="w-5 h-5 text-cream" />
+            <div className="flex items-center gap-3 mb-5">
+              <div className="w-9 h-9 bg-terracotta rounded-xl flex items-center justify-center">
+                <PawPrint className="w-5 h-5 text-canvas" strokeWidth={2.5} />
               </div>
-              <span className="font-display font-700 text-lg text-ink">SORTED</span>
+              <span className="font-display text-xl font-semibold text-ink">Sorted</span>
             </div>
-            <p className="text-sm text-ink-muted">
+            <p className="text-sm text-ink-muted leading-relaxed">
               Your pet's life, sorted. AI-powered food management for modern pet parents.
             </p>
           </div>
           
           <div>
-            <h4 className="font-display font-600 text-sm text-ink mb-4">Product</h4>
-            <ul className="space-y-2">
-              <li><a href="#features" className="text-sm text-ink-muted hover:text-ink transition-colors">Features</a></li>
-              <li><a href="#pricing" className="text-sm text-ink-muted hover:text-ink transition-colors">Pricing</a></li>
-              <li><a href="#" className="text-sm text-ink-muted hover:text-ink transition-colors">Telegram Bot</a></li>
-              <li><a href="#" className="text-sm text-ink-muted hover:text-ink transition-colors">API</a></li>
+            <h4 className="font-display font-semibold text-sm text-ink mb-5">Product</h4>
+            <ul className="space-y-3">
+              <li><a href="#features" className="text-sm text-ink-muted hover:text-ink transition-colors underline-animate">Features</a></li>
+              <li><a href="#pricing" className="text-sm text-ink-muted hover:text-ink transition-colors underline-animate">Pricing</a></li>
+              <li><a href="#" className="text-sm text-ink-muted hover:text-ink transition-colors underline-animate">Telegram Bot</a></li>
+              <li><a href="#" className="text-sm text-ink-muted hover:text-ink transition-colors underline-animate">API</a></li>
             </ul>
           </div>
           
           <div>
-            <h4 className="font-display font-600 text-sm text-ink mb-4">Company</h4>
-            <ul className="space-y-2">
-              <li><a href="#" className="text-sm text-ink-muted hover:text-ink transition-colors">About</a></li>
-              <li><a href="#" className="text-sm text-ink-muted hover:text-ink transition-colors">Blog</a></li>
-              <li><a href="#" className="text-sm text-ink-muted hover:text-ink transition-colors">Careers</a></li>
-              <li><a href="#" className="text-sm text-ink-muted hover:text-ink transition-colors">Press</a></li>
+            <h4 className="font-display font-semibold text-sm text-ink mb-5">Company</h4>
+            <ul className="space-y-3">
+              <li><a href="#" className="text-sm text-ink-muted hover:text-ink transition-colors underline-animate">About</a></li>
+              <li><a href="#" className="text-sm text-ink-muted hover:text-ink transition-colors underline-animate">Blog</a></li>
+              <li><a href="#" className="text-sm text-ink-muted hover:text-ink transition-colors underline-animate">Careers</a></li>
+              <li><a href="#" className="text-sm text-ink-muted hover:text-ink transition-colors underline-animate">Press</a></li>
             </ul>
           </div>
           
           <div>
-            <h4 className="font-display font-600 text-sm text-ink mb-4">Support</h4>
-            <ul className="space-y-2">
-              <li><a href="#" className="text-sm text-ink-muted hover:text-ink transition-colors">Help Center</a></li>
-              <li><a href="#" className="text-sm text-ink-muted hover:text-ink transition-colors">Contact</a></li>
-              <li><a href="#" className="text-sm text-ink-muted hover:text-ink transition-colors">Privacy</a></li>
-              <li><a href="#" className="text-sm text-ink-muted hover:text-ink transition-colors">Terms</a></li>
+            <h4 className="font-display font-semibold text-sm text-ink mb-5">Support</h4>
+            <ul className="space-y-3">
+              <li><a href="#" className="text-sm text-ink-muted hover:text-ink transition-colors underline-animate">Help Center</a></li>
+              <li><a href="#" className="text-sm text-ink-muted hover:text-ink transition-colors underline-animate">Contact</a></li>
+              <li><a href="#" className="text-sm text-ink-muted hover:text-ink transition-colors underline-animate">Privacy</a></li>
+              <li><a href="#" className="text-sm text-ink-muted hover:text-ink transition-colors underline-animate">Terms</a></li>
             </ul>
           </div>
         </div>
         
-        <div className="border-t border-cream pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+        <div className="border-t border-linen/60 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-sm text-ink-muted">
-            © 2026 SORTED. All rights reserved.
+            © 2026 Sorted. All rights reserved.
           </p>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-5">
             <a href="#" className="text-ink-muted hover:text-ink transition-colors">
               <span className="sr-only">Twitter</span>
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
