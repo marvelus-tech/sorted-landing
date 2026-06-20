@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react'
-import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
+import { useState, useEffect, useRef } from 'react'
+import { motion, AnimatePresence, useScroll, useTransform, useSpring, useMotionValue } from 'framer-motion'
 import {
   Dog,
   Brain,
@@ -18,7 +18,8 @@ import {
   Heart,
   Sparkles,
   PawPrint,
-  ArrowUpRight
+  ArrowUpRight,
+  Quote
 } from 'lucide-react'
 
 import './styles.css'
@@ -36,6 +37,90 @@ const fadeInUp = {
 const staggerContainer = {
   hidden: {},
   visible: { transition: { staggerChildren: 0.1 } }
+}
+
+/* ── Magnetic Button Component ── */
+function MagneticButton({ children, className, onClick }: { children: React.ReactNode; className?: string; onClick?: () => void }) {
+  const ref = useRef<HTMLButtonElement>(null)
+  const x = useMotionValue(0)
+  const y = useMotionValue(0)
+  const springX = useSpring(x, { stiffness: 150, damping: 15 })
+  const springY = useSpring(y, { stiffness: 150, damping: 15 })
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLButtonElement>) => {
+    if (!ref.current) return
+    const rect = ref.current.getBoundingClientRect()
+    const centerX = rect.left + rect.width / 2
+    const centerY = rect.top + rect.height / 2
+    x.set((e.clientX - centerX) * 0.15)
+    y.set((e.clientY - centerY) * 0.15)
+  }
+
+  const handleMouseLeave = () => {
+    x.set(0)
+    y.set(0)
+  }
+
+  return (
+    <motion.button
+      ref={ref}
+      style={{ x: springX, y: springY }}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      onClick={onClick}
+      className={className}
+    >
+      {children}
+    </motion.button>
+  )
+}
+
+/* ── Live Counter Component ── */
+function LiveCounter({ end, duration = 2, suffix = "" }: { end: number; duration?: number; suffix?: string }) {
+  const [count, setCount] = useState(0)
+  const ref = useRef<HTMLSpanElement>(null)
+  const [isVisible, setIsVisible] = useState(false)
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !isVisible) {
+          setIsVisible(true)
+        }
+      },
+      { threshold: 0.5 }
+    )
+
+    if (ref.current) observer.observe(ref.current)
+    return () => observer.disconnect()
+  }, [isVisible])
+
+  useEffect(() => {
+    if (!isVisible) return
+
+    let startTime: number
+    let animationFrame: number
+
+    const animate = (timestamp: number) => {
+      if (!startTime) startTime = timestamp
+      const progress = Math.min((timestamp - startTime) / (duration * 1000), 1)
+      const eased = 1 - Math.pow(1 - progress, 3) // easeOutCubic
+      setCount(Math.floor(eased * end))
+
+      if (progress < 1) {
+        animationFrame = requestAnimationFrame(animate)
+      }
+    }
+
+    animationFrame = requestAnimationFrame(animate)
+    return () => cancelAnimationFrame(animationFrame)
+  }, [isVisible, end, duration])
+
+  return (
+    <span ref={ref}>
+      {count.toLocaleString()}{suffix}
+    </span>
+  )
 }
 
 /* ── Components ── */
@@ -68,9 +153,9 @@ function Navbar() {
 
         <div className="hidden md:flex items-center gap-4">
           <button className="text-sm font-medium text-ink-muted hover:text-ink transition-colors">Sign in</button>
-          <button className="bg-ink text-canvas px-6 py-2.5 rounded-full text-sm font-medium hover:bg-ink-soft transition-all duration-300 hover:shadow-warm">
+          <MagneticButton className="bg-ink text-canvas px-6 py-2.5 rounded-full text-sm font-medium hover:bg-ink-soft transition-all duration-300 hover:shadow-warm">
             Get Started
-          </button>
+          </MagneticButton>
         </div>
 
         <button className="md:hidden p-2" onClick={() => setIsOpen(!isOpen)}>
@@ -159,10 +244,10 @@ function Hero() {
           </motion.p>
           
           <motion.div variants={fadeInUp} custom={3} className="flex flex-col sm:flex-row gap-4">
-            <button className="bg-ink text-canvas px-8 py-4 rounded-full text-base font-medium hover:bg-ink-soft transition-all duration-300 hover:shadow-warm-lg flex items-center justify-center gap-2 group">
+            <MagneticButton className="bg-ink text-canvas px-8 py-4 rounded-full text-base font-medium hover:bg-ink-soft transition-all duration-300 hover:shadow-warm-lg flex items-center justify-center gap-2 group">
               Start Free on Telegram
               <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
-            </button>
+            </MagneticButton>
             <button className="border-2 border-ink/10 text-ink px-8 py-4 rounded-full text-base font-medium hover:border-ink/30 transition-all duration-300 flex items-center justify-center gap-2 group">
               See How It Works
               <ArrowUpRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
@@ -280,6 +365,112 @@ function Hero() {
   )
 }
 
+/* ── Social Proof Section ── */
+function SocialProof() {
+  const stats = [
+    { value: 5000, suffix: "+", label: "Happy pet parents" },
+    { value: 12000, suffix: "+", label: "Pets fed" },
+    { value: 98, suffix: "%", label: "Satisfaction rate" },
+    { value: 2.5, suffix: "M", label: "Saved on pet food" }
+  ]
+
+  const testimonials = [
+    {
+      name: "Sarah M.",
+      pet: "Golden Retriever, Max",
+      text: "I used to stress about running out of food. Now I just get a message, tap approve, and it arrives. It's like magic.",
+      rating: 5
+    },
+    {
+      name: "James K.",
+      pet: "Tabby Cat, Luna",
+      text: "Saved $47 in the first month alone. The bundling feature is genius — Luna gets her food, I get her treats, free shipping.",
+      rating: 5
+    },
+    {
+      name: "The Chen Family",
+      pet: "3 Dogs, 2 Cats",
+      text: "We have 5 pets. SORTED handles all of them. The family sharing means my wife and I both get notifications.",
+      rating: 5
+    }
+  ]
+
+  return (
+    <section className="py-24 bg-cream relative">
+      <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-linen to-transparent" />
+      
+      <div className="max-w-6xl mx-auto px-6">
+        {/* Stats */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+          className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-20"
+        >
+          {stats.map((stat, i) => (
+            <div key={i} className="text-center">
+              <div className="font-display text-4xl md:text-5xl text-terracotta mb-2">
+                <LiveCounter end={stat.value} suffix={stat.suffix} />
+              </div>
+              <p className="text-sm text-ink-muted">{stat.label}</p>
+            </div>
+          ))}
+        </motion.div>
+
+        {/* Testimonials */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.7, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+          className="text-center mb-12"
+        >
+          <span className="text-terracotta font-mono-display text-sm uppercase tracking-widest">Testimonials</span>
+          <h2 className="font-display text-4xl md:text-5xl text-ink mt-5 mb-4">
+            Loved by pet parents
+          </h2>
+        </motion.div>
+
+        <div className="grid md:grid-cols-3 gap-6">
+          {testimonials.map((testimonial, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ delay: i * 0.15, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+              className="bg-white rounded-[1.5rem] p-8 hover-lift relative"
+            >
+              <Quote className="w-8 h-8 text-terracotta/20 absolute top-6 right-6" />
+              
+              <div className="flex gap-1 mb-4">
+                {[...Array(testimonial.rating)].map((_, j) => (
+                  <Star key={j} className="w-4 h-4 text-gold fill-gold" />
+                ))}
+              </div>
+              
+              <p className="text-ink-muted leading-relaxed mb-6 text-sm">"{testimonial.text}"</p>
+              
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-terracotta/10 rounded-full flex items-center justify-center">
+                  <span className="text-terracotta font-display font-semibold">
+                    {testimonial.name.charAt(0)}
+                  </span>
+                </div>
+                <div>
+                  <p className="font-medium text-ink text-sm">{testimonial.name}</p>
+                  <p className="text-xs text-ink-muted">{testimonial.pet}</p>
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
 function HowItWorks() {
   const steps = [
     {
@@ -306,7 +497,6 @@ function HowItWorks() {
 
   return (
     <section id="how-it-works" className="py-32 bg-white relative">
-      {/* Subtle background decoration */}
       <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-linen to-transparent" />
       
       <div className="max-w-6xl mx-auto px-6">
@@ -337,7 +527,6 @@ function HowItWorks() {
               className="relative group"
             >
               <div className="bg-cream rounded-[1.5rem] p-8 hover-lift h-full relative overflow-hidden">
-                {/* Large step number */}
                 <span className="step-number">0{i + 1}</span>
                 
                 <div className="relative z-10">
@@ -441,6 +630,8 @@ function Features() {
 }
 
 function Pricing() {
+  const [isAnnual, setIsAnnual] = useState(false)
+  
   const plans = [
     {
       name: "Starter",
@@ -458,7 +649,7 @@ function Pricing() {
     },
     {
       name: "Autopilot",
-      price: "$9.99",
+      price: isAnnual ? "$7.99" : "$9.99",
       period: "/month",
       description: "Full AI automation for busy pet parents",
       features: [
@@ -474,7 +665,7 @@ function Pricing() {
     },
     {
       name: "Multi-Pet",
-      price: "$19.99",
+      price: isAnnual ? "$15.99" : "$19.99",
       period: "/month",
       description: "For households with 3+ pets or breeders",
       features: [
@@ -500,15 +691,32 @@ function Pricing() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-          className="text-center mb-20"
+          className="text-center mb-12"
         >
           <span className="text-terracotta font-mono-display text-sm uppercase tracking-widest">Pricing</span>
           <h2 className="font-display text-4xl md:text-5xl lg:text-6xl text-ink mt-5 mb-6 leading-tight">
             Simple, transparent pricing
           </h2>
-          <p className="text-lg text-ink-muted max-w-xl mx-auto leading-relaxed">
+          <p className="text-lg text-ink-muted max-w-xl mx-auto leading-relaxed mb-8">
             Start free. Upgrade when you're ready to go full autopilot. No hidden fees, ever.
           </p>
+          
+          {/* Billing toggle */}
+          <div className="inline-flex items-center gap-3 bg-cream rounded-full p-1.5">
+            <button
+              onClick={() => setIsAnnual(false)}
+              className={`px-5 py-2 rounded-full text-sm font-medium transition-all ${!isAnnual ? 'bg-white text-ink shadow-sm' : 'text-ink-muted'}`}
+            >
+              Monthly
+            </button>
+            <button
+              onClick={() => setIsAnnual(true)}
+              className={`px-5 py-2 rounded-full text-sm font-medium transition-all ${isAnnual ? 'bg-white text-ink shadow-sm' : 'text-ink-muted'}`}
+            >
+              Annual
+              <span className="ml-1.5 text-xs text-terracotta">Save 20%</span>
+            </button>
+          </div>
         </motion.div>
 
         <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
@@ -537,13 +745,13 @@ function Pricing() {
                 {plan.period && <span className={`text-sm ${plan.popular ? 'text-canvas/60' : 'text-ink-muted'}`}>{plan.period}</span>}
               </div>
               
-              <button className={`w-full py-3.5 rounded-full text-sm font-medium mb-8 transition-all duration-300 ${
+              <MagneticButton className={`w-full py-3.5 rounded-full text-sm font-medium mb-8 transition-all duration-300 ${
                 plan.popular
                   ? 'bg-canvas text-ink hover:bg-cream-warm'
                   : 'bg-ink text-canvas hover:bg-ink-soft'
               }`}>
                 {plan.cta}
-              </button>
+              </MagneticButton>
               
               <ul className="space-y-4">
                 {plan.features.map((feature, j) => (
@@ -658,7 +866,6 @@ function FAQ() {
 function CTA() {
   return (
     <section className="py-32 bg-ink text-canvas relative overflow-hidden">
-      {/* Background decoration */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-terracotta/5 rounded-full blur-[100px]" />
         <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-sage/5 rounded-full blur-[80px]" />
@@ -684,10 +891,10 @@ function CTA() {
             Start free on Telegram — no credit card required.
           </p>
           
-          <button className="bg-canvas text-ink px-10 py-4 rounded-full text-base font-medium hover:bg-cream-warm transition-all duration-300 hover:shadow-warm-lg inline-flex items-center gap-2 group">
+          <MagneticButton className="bg-canvas text-ink px-10 py-4 rounded-full text-base font-medium hover:bg-cream-warm transition-all duration-300 hover:shadow-warm-lg inline-flex items-center gap-2 group">
             Start on Telegram
             <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
-          </button>
+          </MagneticButton>
           
           <p className="text-sm text-canvas/40 mt-8">
             Free forever plan available. Upgrade to Autopilot anytime.
@@ -775,6 +982,7 @@ function App() {
     <div className="grain">
       <Navbar />
       <Hero />
+      <SocialProof />
       <HowItWorks />
       <Features />
       <Pricing />
