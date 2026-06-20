@@ -15,6 +15,8 @@ import {
   Heart
 } from 'lucide-react'
 
+import heroImage from './assets/hero.png'
+import heroFlatlay from './assets/hero-flatlay.png'
 import predictiveIntelligence from './assets/features/predictive-intelligence.png'
 import smartPriceComparison from './assets/features/smart-price-comparison.png'
 import trustFirstDesign from './assets/features/trust-first-design.png'
@@ -174,7 +176,7 @@ function Hero() {
         >
           <div className="relative rounded-3xl overflow-hidden shadow-2xl border border-cream-dark">
             <img 
-              src="/assets/hero.png" 
+              src={heroImage} 
               alt="Premium pet food with fresh ingredients and mobile ordering"
               className="w-full h-auto object-cover"
               loading="eager"
@@ -304,7 +306,7 @@ function LifestyleShowcase() {
           className="relative rounded-3xl overflow-hidden shadow-2xl"
         >
           <img 
-            src="/assets/hero-flatlay.png" 
+            src={heroFlatlay} 
             alt="Premium pet food ingredients including fresh meat, vegetables, and quality kibble"
             className="w-full h-auto object-cover"
             loading="lazy"
