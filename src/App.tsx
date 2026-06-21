@@ -3,18 +3,26 @@ import { motion, AnimatePresence } from 'framer-motion'
 import {
   Dog,
   Brain,
+  MessageCircle,
+  Zap,
   ChevronRight,
   Check,
   ArrowRight,
+  Menu,
   X,
+  Bot,
   Clock,
   Heart,
-  Star,
-  Shield,
-  Package,
-  Calendar,
-  Sparkles
+  Star
 } from 'lucide-react'
+
+import heroFlatlay from './assets/hero-flatlay.png'
+import predictiveIntelligence from './assets/features/predictive-intelligence.png'
+import smartPriceComparison from './assets/features/smart-price-comparison.png'
+import trustFirstDesign from './assets/features/trust-first-design.png'
+import intelligentBundling from './assets/features/intelligent-bundling.png'
+import flexibleScheduling from './assets/features/flexible-scheduling.png'
+import dietHealthTracking from './assets/features/diet-health-tracking.png'
 
 import './assets/pet-imagery.css'
 
@@ -47,23 +55,23 @@ const demoChatMessages: ChatMessage[] = [
 ]
 
 /* ── Scroll Reveal Hook ── */
-function useScrollReveal() {
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('revealed')
-          }
-        })
-      },
-      { threshold: 0.1, rootMargin: '0px 0px -50px 0px' }
-    )
+// function useScrollReveal() {
+//   useEffect(() => {
+//     const observer = new IntersectionObserver(
+//       (entries) => {
+//         entries.forEach((entry) => {
+//           if (entry.isIntersecting) {
+//             entry.target.classList.add('revealed')
+//           }
+//         })
+//       },
+//       { threshold: 0.1, rootMargin: '0px 0px -50px 0px' }
+//     )
 
-    document.querySelectorAll('[data-animate]').forEach((el) => observer.observe(el))
-    return () => observer.disconnect()
-  }, [])
-}
+//     document.querySelectorAll('[data-animate]').forEach((el) => observer.observe(el))
+//     return () => observer.disconnect()
+//   }, [])
+// }
 
 /* ── Chat Simulation Component ── */
 function ChatSimulation({ messages, isDemo = false }: { messages: ChatMessage[]; isDemo?: boolean }) {
@@ -73,7 +81,6 @@ function ChatSimulation({ messages, isDemo = false }: { messages: ChatMessage[];
   const timeoutsRef = useRef<number[]>([])
 
   const startChat = () => {
-    // Clear existing timeouts
     timeoutsRef.current.forEach(clearTimeout)
     timeoutsRef.current = []
     setVisibleMessages([])
@@ -120,10 +127,10 @@ function ChatSimulation({ messages, isDemo = false }: { messages: ChatMessage[];
             className={`mb-3 flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
           >
             <div
-              className={`max-w-[85%] px-4 py-2.5 rounded-2xl text-sm leading-relaxed animate-message-${msg.sender === 'user' ? 'right' : 'left'} ${
+              className={`max-w-[85%] px-4 py-2.5 rounded-2xl text-sm leading-relaxed ${
                 msg.sender === 'user'
-                  ? 'bg-sorted-500 text-white rounded-br-md'
-                  : 'bg-white text-stone-700 border border-stone-100 rounded-bl-md shadow-sm'
+                  ? 'bg-sage text-cream rounded-br-md'
+                  : 'bg-white text-ink border border-cream-dark rounded-bl-md shadow-sm'
               }`}
             >
               {msg.text.split('\n').map((line, i) => (
@@ -135,11 +142,11 @@ function ChatSimulation({ messages, isDemo = false }: { messages: ChatMessage[];
         
         {isTyping && (
           <div className="flex justify-start mb-3">
-            <div className="bg-white border border-stone-100 rounded-2xl rounded-bl-md px-4 py-3 shadow-sm">
+            <div className="bg-white border border-cream-dark rounded-2xl rounded-bl-md px-4 py-3 shadow-sm">
               <div className="flex gap-1">
-                <div className="w-2 h-2 rounded-full bg-stone-300 animate-typing" style={{ animationDelay: '0ms' }} />
-                <div className="w-2 h-2 rounded-full bg-stone-300 animate-typing" style={{ animationDelay: '200ms' }} />
-                <div className="w-2 h-2 rounded-full bg-stone-300 animate-typing" style={{ animationDelay: '400ms' }} />
+                <div className="w-2 h-2 rounded-full bg-ink-muted animate-bounce" style={{ animationDelay: '0ms' }} />
+                <div className="w-2 h-2 rounded-full bg-ink-muted animate-bounce" style={{ animationDelay: '150ms' }} />
+                <div className="w-2 h-2 rounded-full bg-ink-muted animate-bounce" style={{ animationDelay: '300ms' }} />
               </div>
             </div>
           </div>
@@ -150,7 +157,7 @@ function ChatSimulation({ messages, isDemo = false }: { messages: ChatMessage[];
         <div className="text-center mt-6">
           <button 
             onClick={startChat}
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white border border-stone-200 text-stone-700 font-semibold hover:border-stone-300 hover:bg-stone-50 transition-all hover:-translate-y-0.5"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white border border-cream-dark text-ink font-semibold hover:border-ink/20 hover:bg-cream transition-all"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
@@ -165,6 +172,7 @@ function ChatSimulation({ messages, isDemo = false }: { messages: ChatMessage[];
 
 /* ── Components ── */
 function Navbar() {
+  const [isOpen, setIsOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
 
   useEffect(() => {
@@ -174,107 +182,125 @@ function Navbar() {
   }, [])
 
   return (
-    <nav 
-      id="navbar"
-      className={`fixed top-0 w-full z-50 transition-all duration-500 ${
-        scrolled ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'
-      }`}
-    >
-      <div className="mx-auto max-w-7xl px-6">
-        <div className="flex items-center justify-between h-16 backdrop-blur-xl bg-white/80 border border-stone-200/60 rounded-2xl mt-4 px-6 shadow-sm shadow-stone-900/5">
-          <a href="#" className="font-extrabold text-xl tracking-tight text-stone-900">SORTED</a>
-          <div className="hidden md:flex items-center gap-8 text-sm font-medium text-stone-500">
-            <a href="#how-it-works" className="hover:text-stone-900 transition-colors duration-200">How it Works</a>
-            <a href="#features" className="hover:text-stone-900 transition-colors duration-200">Features</a>
-            <a href="#pricing" className="hover:text-stone-900 transition-colors duration-200">Pricing</a>
-            <a href="#faq" className="hover:text-stone-900 transition-colors duration-200">FAQ</a>
+    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'bg-cream/90 backdrop-blur-md shadow-sm' : ''}`}>
+      <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 bg-sage rounded-lg flex items-center justify-center">
+            <Dog className="w-5 h-5 text-cream" />
           </div>
-          <a 
-            href="#start" 
-            className="bg-sorted-600 text-white px-5 py-2.5 rounded-full text-sm font-semibold hover:bg-sorted-700 transition-all duration-300 hover:shadow-lg hover:shadow-sorted-500/20 hover:-translate-y-0.5 active:translate-y-0"
-          >
-            Start Free
-          </a>
+          <span className="font-display font-bold text-xl tracking-tight text-ink">SORTED</span>
         </div>
+        
+        <div className="hidden md:flex items-center gap-8">
+          <a href="#how-it-works" className="text-sm font-medium text-ink-muted hover:text-ink transition-colors">How it works</a>
+          <a href="#features" className="text-sm font-medium text-ink-muted hover:text-ink transition-colors">Features</a>
+          <a href="#pricing" className="text-sm font-medium text-ink-muted hover:text-ink transition-colors">Pricing</a>
+          <a href="#faq" className="text-sm font-medium text-ink-muted hover:text-ink transition-colors">FAQ</a>
+        </div>
+
+        <div className="hidden md:flex items-center gap-3">
+          <button className="text-sm font-medium text-ink-muted hover:text-ink transition-colors">Sign in</button>
+          <button className="bg-ink text-cream px-5 py-2.5 rounded-full text-sm font-medium hover:bg-ink-light transition-colors">
+            Get Started
+          </button>
+        </div>
+
+        <button className="md:hidden" onClick={() => setIsOpen(!isOpen)}>
+          {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+        </button>
       </div>
+
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="md:hidden bg-cream border-t border-cream-dark"
+          >
+            <div className="px-6 py-4 flex flex-col gap-4">
+              <a href="#how-it-works" className="text-sm font-medium text-ink-muted">How it works</a>
+              <a href="#features" className="text-sm font-medium text-ink-muted">Features</a>
+              <a href="#pricing" className="text-sm font-medium text-ink-muted">Pricing</a>
+              <a href="#faq" className="text-sm font-medium text-ink-muted">FAQ</a>
+              <button className="bg-ink text-cream px-5 py-2.5 rounded-full text-sm font-medium w-full">
+                Get Started
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </nav>
   )
 }
 
 function Hero() {
   return (
-    <section className="relative min-h-screen flex items-center pt-20 pb-16 overflow-hidden">
-      {/* Ambient background orbs */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-[10%] w-96 h-96 bg-sorted-100/30 rounded-full blur-3xl" />
-        <div className="absolute bottom-20 right-[5%] w-[30rem] h-[30rem] bg-warm-100/30 rounded-full blur-3xl" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[40rem] h-[40rem] bg-stone-100/40 rounded-full blur-3xl" />
-      </div>
-
-      <div className="relative mx-auto max-w-7xl px-6 grid lg:grid-cols-2 gap-16 items-center">
-        {/* Left: Copy */}
-        <div className="space-y-8 max-w-xl">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-sorted-50 border border-sorted-100 text-sorted-700 text-xs font-bold uppercase tracking-wider animate-spring">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sorted-400 opacity-75" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-sorted-500" />
-            </span>
-            Now in Telegram
+    <section className="relative min-h-screen flex items-center pt-20 overflow-hidden">
+      {/* Background decoration */}
+      <div className="absolute top-20 right-0 w-96 h-96 bg-sage/10 rounded-full blur-3xl" />
+      <div className="absolute bottom-0 left-0 w-72 h-72 bg-coral/10 rounded-full blur-3xl" />
+      
+      <div className="max-w-6xl mx-auto px-6 py-20 grid md:grid-cols-2 gap-12 items-center">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
+          <div className="inline-flex items-center gap-2 bg-sage/10 text-sage-dark px-4 py-2 rounded-full text-sm font-medium mb-6">
+            <Bot className="w-4 h-4" />
+            <span>AI-Powered Pet Care</span>
           </div>
-
-          <h1 className="text-5xl lg:text-6xl xl:text-7xl font-extrabold tracking-tight leading-[1.05] text-stone-900">
-            Never worry about<br />
-            <span className="text-gradient">pet food again.</span>
+          
+          <h1 className="font-display font-bold text-5xl md:text-7xl leading-[0.95] tracking-tight text-ink mb-6">
+            Your pet's life.
+            <br />
+            <span className="gradient-text">Sorted.</span>
           </h1>
-
-          <p className="text-lg lg:text-xl text-stone-500 leading-relaxed">
-            SORTED predicts when you'll run out, compares prices across vendors, and orders through Telegram — so you can focus on walks, not Walmart runs.
+          
+          <p className="text-lg text-ink-muted leading-relaxed mb-8 max-w-lg">
+            Never run out of kibble again. SORTED predicts what your pet needs, 
+            finds the best price, and orders it — all through a simple Telegram message.
           </p>
-
-          <div className="flex flex-wrap items-center gap-4">
-            <a 
-              href="#start" 
-              className="group inline-flex items-center gap-2 bg-sorted-600 text-white px-8 py-4 rounded-full font-semibold text-lg hover:bg-sorted-700 transition-all duration-300 hover:shadow-xl hover:shadow-sorted-500/20 hover:-translate-y-0.5 active:translate-y-0"
-            >
+          
+          <div className="flex flex-col sm:flex-row gap-4">
+            <button className="bg-ink text-cream px-8 py-4 rounded-full text-base font-medium hover:bg-ink-light transition-all hover:shadow-lg flex items-center justify-center gap-2">
               Start Free on Telegram
-              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
-            </a>
-            <a 
-              href="#demo" 
-              className="inline-flex items-center gap-2 px-8 py-4 rounded-full font-semibold text-lg text-stone-700 bg-white border border-stone-200 hover:border-stone-300 hover:bg-stone-50 transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0"
-            >
-              <svg className="w-5 h-5 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/>
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-              </svg>
-              See It in Action
-            </a>
+              <ArrowRight className="w-5 h-5" />
+            </button>
+            <button className="border-2 border-ink/20 text-ink px-8 py-4 rounded-full text-base font-medium hover:border-ink/40 transition-colors">
+              See How It Works
+            </button>
           </div>
-
-          <div className="flex flex-wrap items-center gap-6 text-sm text-stone-400 pt-2">
-            <span className="flex items-center gap-2">
-              <Check className="w-4 h-4 text-sorted-500" />
-              No credit card
-            </span>
-            <span className="flex items-center gap-2">
-              <Clock className="w-4 h-4 text-sorted-500" />
-              2 min setup
-            </span>
-            <span className="flex items-center gap-2">
-              <X className="w-4 h-4 text-sorted-500" />
-              Cancel anytime
-            </span>
+          
+          <div className="flex items-center gap-6 mt-10 text-sm text-ink-muted">
+            <div className="flex items-center gap-2">
+              <Check className="w-4 h-4 text-sage" />
+              <span>No credit card</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Check className="w-4 h-4 text-sage" />
+              <span>Cancel anytime</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Check className="w-4 h-4 text-sage" />
+              <span>Free forever plan</span>
+            </div>
           </div>
-        </div>
+        </motion.div>
 
-        {/* Right: Telegram Chat (The Wow Moment) */}
-        <div className="relative lg:pl-8">
-          {/* Phone Frame */}
-          <div className="relative mx-auto max-w-[340px] bg-white rounded-[2.5rem] shadow-2xl shadow-stone-900/10 border border-stone-100 overflow-hidden">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.3, duration: 0.8, ease: "easeOut" }}
+          className="relative"
+        >
+          {/* Telegram Chat Demo - The Wow Moment */}
+          <div className="relative mx-auto max-w-[340px] bg-white rounded-[2.5rem] shadow-2xl shadow-ink/10 border border-cream-dark overflow-hidden">
             {/* Notch */}
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-28 h-7 bg-stone-900 rounded-b-2xl z-20" />
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-28 h-7 bg-ink rounded-b-2xl z-20" />
             {/* Status Bar */}
-            <div className="bg-white pt-8 pb-2 px-6 flex items-center justify-between text-[10px] font-semibold text-stone-900 z-10 relative">
+            <div className="bg-white pt-8 pb-2 px-6 flex items-center justify-between text-[10px] font-semibold text-ink z-10 relative">
               <span>9:41</span>
               <div className="flex items-center gap-1">
                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/></svg>
@@ -282,12 +308,14 @@ function Hero() {
               </div>
             </div>
             {/* Chat Header */}
-            <div className="bg-white border-b border-stone-100 pb-3 px-5 flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-sorted-100 flex items-center justify-center text-sorted-600 font-bold text-lg">S</div>
+            <div className="bg-white border-b border-cream-dark pb-3 px-5 flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-sage/10 flex items-center justify-center">
+                <Dog className="w-5 h-5 text-sage" />
+              </div>
               <div>
-                <div className="font-bold text-stone-900 text-sm">SORTED</div>
-                <div className="text-[11px] text-sorted-500 flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-sorted-500 animate-gentle-pulse" />
+                <div className="font-bold text-ink text-sm">SORTED</div>
+                <div className="text-[11px] text-sage flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-sage animate-pulse" />
                   Online
                 </div>
               </div>
@@ -295,11 +323,11 @@ function Hero() {
             {/* Chat Messages */}
             <ChatSimulation messages={heroChatMessages} />
             {/* Input Area */}
-            <div className="bg-white border-t border-stone-100 p-3 flex items-center gap-2">
-              <div className="flex-1 h-10 bg-stone-50 rounded-full border border-stone-100 flex items-center px-4 text-stone-400 text-sm">
+            <div className="bg-white border-t border-cream-dark p-3 flex items-center gap-2">
+              <div className="flex-1 h-10 bg-cream rounded-full border border-cream-dark flex items-center px-4 text-ink-muted text-sm">
                 Message...
               </div>
-              <div className="w-10 h-10 rounded-full bg-sorted-500 flex items-center justify-center text-white shadow-lg shadow-sorted-500/30">
+              <div className="w-10 h-10 rounded-full bg-sage flex items-center justify-center text-cream shadow-lg">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
                 </svg>
@@ -308,35 +336,23 @@ function Hero() {
           </div>
 
           {/* Floating Stats Cards */}
-          <div className="absolute -top-2 -right-4 lg:right-0 bg-white rounded-2xl shadow-xl shadow-stone-900/5 p-4 border border-stone-100 animate-float z-10">
-            <div className="text-[10px] text-stone-400 uppercase tracking-wider font-bold mb-1">Saved this month</div>
-            <div className="text-2xl font-extrabold text-warm-600">$23.40</div>
-            <div className="text-[10px] text-stone-400 mt-1">vs. last month</div>
-          </div>
-          <div className="absolute -bottom-2 -left-4 lg:left-0 bg-white rounded-2xl shadow-xl shadow-stone-900/5 p-4 border border-stone-100 animate-float-delayed z-10">
-            <div className="text-[10px] text-stone-400 uppercase tracking-wider font-bold mb-1">Next delivery</div>
-            <div className="text-2xl font-extrabold text-sorted-600">Thu, Jun 25</div>
-            <div className="text-[10px] text-stone-400 mt-1">Royal Canin 30lb</div>
-          </div>
-        </div>
-      </div>
-    </section>
-  )
-}
-
-function TrustBar() {
-  return (
-    <section className="py-10 bg-white border-y border-stone-100">
-      <div className="mx-auto max-w-7xl px-6">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-8">
-          <div className="text-sm font-bold text-stone-400 uppercase tracking-wider">Trusted by 5,000+ pet parents</div>
-          <div className="flex items-center gap-10 opacity-30">
-            <span className="text-lg font-extrabold text-stone-900 tracking-tight">Chewy</span>
-            <span className="text-lg font-extrabold text-stone-900 tracking-tight">Amazon</span>
-            <span className="text-lg font-extrabold text-stone-900 tracking-tight">Petco</span>
-            <span className="text-lg font-extrabold text-stone-900 tracking-tight">PetSmart</span>
-          </div>
-        </div>
+          <motion.div
+            animate={{ y: [0, -10, 0] }}
+            transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
+            className="absolute -top-4 -right-4 bg-coral text-white px-4 py-2 rounded-full text-sm font-medium shadow-lg"
+          >
+            Save 12%
+          </motion.div>
+          
+          <motion.div
+            animate={{ y: [0, 10, 0] }}
+            transition={{ repeat: Infinity, duration: 4, ease: "easeInOut", delay: 1 }}
+            className="absolute -bottom-4 -left-4 bg-sage text-cream px-4 py-2 rounded-full text-sm font-medium shadow-lg"
+          >
+            <Clock className="w-4 h-4 inline mr-1" />
+            2 min setup
+          </motion.div>
+        </motion.div>
       </div>
     </section>
   )
@@ -344,14 +360,19 @@ function TrustBar() {
 
 function ProblemValue() {
   return (
-    <section className="py-24 lg:py-32 bg-warm-50" id="problem">
-      <div className="mx-auto max-w-7xl px-6">
+    <section className="py-24 lg:py-32 bg-warm/30">
+      <div className="max-w-6xl mx-auto px-6">
         <div className="grid lg:grid-cols-2 gap-16 items-start">
           {/* Before */}
-          <div className="space-y-6" data-animate="spring">
-            <div className="text-warm-600 font-bold text-sm uppercase tracking-wider">The Problem</div>
-            <h2 className="text-4xl lg:text-5xl font-extrabold tracking-tight text-stone-900">The 9pm<br />realization.</h2>
-            <p className="text-lg text-stone-600 leading-relaxed">
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="space-y-6"
+          >
+            <div className="text-coral font-mono-display text-sm uppercase tracking-wider">The Problem</div>
+            <h2 className="font-display font-bold text-4xl lg:text-5xl tracking-tight text-ink">The 9pm<br />realization.</h2>
+            <p className="text-lg text-ink-muted leading-relaxed">
               You're on the couch. Your dog looks at their empty bowl. The stores are closed. Tomorrow morning is going to be a scramble. This mental load — remembering, comparing, ordering — is the invisible tax of pet parenthood.
             </p>
             <div className="space-y-4 pt-4">
@@ -360,22 +381,28 @@ function ProblemValue() {
                 { title: "Overpaying under pressure", desc: "No time to compare prices" },
                 { title: "Constant mental overhead", desc: "'Do we have enough?' — every week" }
               ].map((item, i) => (
-                <div key={i} className="flex items-start gap-4 p-4 rounded-2xl bg-white border border-warm-100">
-                  <div className="w-8 h-8 rounded-full bg-warm-100 flex items-center justify-center text-warm-600 text-sm font-bold shrink-0">✕</div>
+                <div key={i} className="flex items-start gap-4 p-4 rounded-2xl bg-white border border-cream-dark">
+                  <div className="w-8 h-8 rounded-full bg-coral/10 flex items-center justify-center text-coral text-sm font-bold shrink-0">✕</div>
                   <div>
-                    <div className="font-semibold text-stone-900">{item.title}</div>
-                    <div className="text-sm text-stone-500">{item.desc}</div>
+                    <div className="font-semibold text-ink">{item.title}</div>
+                    <div className="text-sm text-ink-muted">{item.desc}</div>
                   </div>
                 </div>
               ))}
             </div>
-          </div>
+          </motion.div>
 
           {/* After */}
-          <div className="space-y-6 lg:mt-16" data-animate="spring">
-            <div className="text-sorted-600 font-bold text-sm uppercase tracking-wider">The SORTED Way</div>
-            <h2 className="text-4xl lg:text-5xl font-extrabold tracking-tight text-stone-900">Calm.<br />Automated.<br />Cheap.</h2>
-            <p className="text-lg text-stone-600 leading-relaxed">
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2 }}
+            className="space-y-6 lg:mt-16"
+          >
+            <div className="text-sage font-mono-display text-sm uppercase tracking-wider">The SORTED Way</div>
+            <h2 className="font-display font-bold text-4xl lg:text-5xl tracking-tight text-ink">Calm.<br />Automated.<br />Cheap.</h2>
+            <p className="text-lg text-ink-muted leading-relaxed">
               SORTED removes the mental load entirely. It lives in Telegram, learns your pet's consumption, and makes sure the bowl is never empty — at the best possible price, without you lifting a finger.
             </p>
             <div className="space-y-4 pt-4">
@@ -384,16 +411,16 @@ function ProblemValue() {
                 { title: "Automatic price comparison", desc: "Best deal, every single order" },
                 { title: "One-tap or autopilot", desc: "You're always in control" }
               ].map((item, i) => (
-                <div key={i} className="flex items-start gap-4 p-4 rounded-2xl bg-white border border-sorted-100 hover:border-sorted-200 transition-colors">
-                  <div className="w-8 h-8 rounded-full bg-sorted-100 flex items-center justify-center text-sorted-600 text-sm font-bold shrink-0">✓</div>
+                <div key={i} className="flex items-start gap-4 p-4 rounded-2xl bg-white border border-sage/20 hover:border-sage/40 transition-colors">
+                  <div className="w-8 h-8 rounded-full bg-sage/10 flex items-center justify-center text-sage text-sm font-bold shrink-0">✓</div>
                   <div>
-                    <div className="font-semibold text-stone-900">{item.title}</div>
-                    <div className="text-sm text-stone-500">{item.desc}</div>
+                    <div className="font-semibold text-ink">{item.title}</div>
+                    <div className="text-sm text-ink-muted">{item.desc}</div>
                   </div>
                 </div>
               ))}
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>
@@ -402,31 +429,70 @@ function ProblemValue() {
 
 function HowItWorks() {
   const steps = [
-    { num: "01", title: "Connect on Telegram", desc: "Add SORTED to your Telegram. Tell us about your pet — breed, age, diet, favorite brands." },
-    { num: "02", title: "AI Learns Your Routine", desc: "We track consumption patterns, predict depletion, and monitor prices across vendors." },
-    { num: "03", title: "One-Tap Approval", desc: "Get a message when it's time to reorder. One tap to approve — we handle the rest." },
-    { num: "04", title: "Never Worry Again", desc: "Food arrives before you run out. Switch to full autopilot mode whenever you're ready." }
+    {
+      icon: MessageCircle,
+      title: "Connect on Telegram",
+      description: "Add SORTED to your Telegram. Tell us about your pet — breed, age, diet, favorite brands."
+    },
+    {
+      icon: Brain,
+      title: "AI Learns Your Routine",
+      description: "We track consumption patterns, predict depletion, and monitor prices across vendors."
+    },
+    {
+      icon: Zap,
+      title: "One-Tap Approval",
+      description: "Get a message when it's time to reorder. One tap to approve — we handle the rest."
+    },
+    {
+      icon: Heart,
+      title: "Never Worry Again",
+      description: "Food arrives before you run out. Switch to full autopilot mode whenever you're ready."
+    }
   ]
 
   return (
-    <section className="py-24 lg:py-32" id="how-it-works">
-      <div className="mx-auto max-w-7xl px-6">
-        <div className="text-center max-w-3xl mx-auto mb-20" data-animate>
-          <div className="text-sorted-600 font-bold text-sm uppercase tracking-wider mb-4">How It Works</div>
-          <h2 className="text-4xl lg:text-5xl font-extrabold tracking-tight text-stone-900 mb-6">From chaos to calm<br />in four steps.</h2>
-          <p className="text-lg text-stone-500">No apps to download. No passwords to remember. Just Telegram — the app you already use.</p>
-        </div>
+    <section id="how-it-works" className="py-24 bg-white">
+      <div className="max-w-6xl mx-auto px-6">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center mb-16"
+        >
+          <span className="text-sage font-mono-display text-sm uppercase tracking-wider">How It Works</span>
+          <h2 className="font-display font-bold text-4xl md:text-5xl text-ink mt-4 mb-4">
+            From chaos to calm in 4 steps
+          </h2>
+          <p className="text-lg text-ink-muted max-w-2xl mx-auto">
+            No apps to download. No passwords to remember. Just Telegram — the app you already use.
+          </p>
+        </motion.div>
 
-        <div className="grid md:grid-cols-4 gap-8" data-stagger>
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
           {steps.map((step, i) => (
-            <div key={i} className="relative group" data-animate="spring">
-              <div className="w-14 h-14 rounded-2xl bg-sorted-50 border-2 border-sorted-100 flex items-center justify-center text-sorted-600 font-extrabold text-xl mb-6 group-hover:scale-110 group-hover:border-sorted-300 transition-all duration-300">{step.num}</div>
-              <h3 className="text-xl font-bold text-stone-900 mb-3">{step.title}</h3>
-              <p className="text-stone-500 leading-relaxed">{step.desc}</p>
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.15 }}
+              className="relative"
+            >
+              <div className="bg-cream rounded-2xl p-8 hover-lift h-full">
+                <div className="w-12 h-12 bg-sage/10 rounded-xl flex items-center justify-center mb-6">
+                  <step.icon className="w-6 h-6 text-sage" />
+                </div>
+                <div className="font-mono-display text-xs text-sage mb-2">0{i + 1}</div>
+                <h3 className="font-display font-semibold text-xl text-ink mb-3">{step.title}</h3>
+                <p className="text-sm text-ink-muted leading-relaxed">{step.description}</p>
+              </div>
               {i < 3 && (
-                <div className="hidden md:block absolute top-7 left-full w-full h-0.5 bg-gradient-to-r from-sorted-200 to-transparent" />
+                <div className="hidden lg:block absolute top-1/2 -right-4 transform -translate-y-1/2 z-10">
+                  <ChevronRight className="w-6 h-6 text-cream-dark" />
+                </div>
               )}
-            </div>
+            </motion.div>
           ))}
         </div>
       </div>
@@ -434,54 +500,123 @@ function HowItWorks() {
   )
 }
 
+function LifestyleShowcase() {
+  return (
+    <section className="py-24 bg-white">
+      <div className="max-w-6xl mx-auto px-6">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center mb-12"
+        >
+          <span className="text-sage font-mono-display text-sm uppercase tracking-wider">Quality First</span>
+          <h2 className="font-display font-bold text-4xl md:text-5xl text-ink mt-4 mb-4">
+            Only the best for your best friend
+          </h2>
+          <p className="text-lg text-ink-muted max-w-2xl mx-auto">
+            We track premium brands, fresh ingredients, and nutritional value — so you don't have to.
+          </p>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
+          className="relative rounded-3xl overflow-hidden shadow-2xl"
+        >
+          <img 
+            src={heroFlatlay} 
+            alt="Premium pet food ingredients including fresh meat, vegetables, and quality kibble"
+            className="w-full h-auto object-cover"
+            loading="lazy"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-ink/20 to-transparent" />
+        </motion.div>
+      </div>
+    </section>
+  )
+}
+
 function Features() {
   const features = [
-    { icon: Brain, title: "Predictive Intelligence", desc: "Our AI learns your pet's consumption patterns and predicts depletion before it happens. No more emergency pet store runs.", badge: "Learns in ~2 weeks", large: true, color: "sorted" },
-    { icon: Sparkles, title: "Smart Price Comparison", desc: "We check Amazon, Chewy, Petco, and local retailers to find the best price on your pet's exact food — every single order.", large: true, color: "warm" },
-    { icon: Shield, title: "Trust-First Design", desc: "Start in approval mode. Every order shows vendor comparison and savings. Unlock full autopilot after 20 approvals.", large: false, color: "sorted" },
-    { icon: Package, title: "Intelligent Bundling", desc: "Automatically combine orders to hit free shipping thresholds. Save on flea meds, treats, and supplements together.", large: false, color: "sorted" },
-    { icon: Calendar, title: "Flexible Scheduling", desc: "Going on vacation? Pause deliveries. Switching brands? Just say so. SORTED adapts to your life, not the other way around.", large: false, color: "sorted" },
-    { icon: Heart, title: "Diet Health Tracking", desc: "Log allergies, weight changes, and vet recommendations. SORTED ensures you never accidentally order the wrong formula.", large: false, color: "sorted" }
+    {
+      image: predictiveIntelligence,
+      title: "Predictive Intelligence",
+      description: "Our AI learns your pet's consumption patterns and predicts depletion before it happens. No more emergency pet store runs.",
+      large: true
+    },
+    {
+      image: smartPriceComparison,
+      title: "Smart Price Comparison",
+      description: "We check Amazon, Chewy, Petco, and local retailers to find the best price on your pet's exact food — every single order.",
+      large: true
+    },
+    {
+      image: trustFirstDesign,
+      title: "Trust-First Design",
+      description: "Start in approval mode. Every order shows vendor comparison and savings. Unlock full autopilot after 20 approvals.",
+      large: false
+    },
+    {
+      image: intelligentBundling,
+      title: "Intelligent Bundling",
+      description: "Automatically combine orders to hit free shipping thresholds. Save on flea meds, treats, and supplements together.",
+      large: false
+    },
+    {
+      image: flexibleScheduling,
+      title: "Flexible Scheduling",
+      description: "Going on vacation? Pause deliveries. Switching brands? Just say so. SORTED adapts to your life, not the other way around.",
+      large: false
+    },
+    {
+      image: dietHealthTracking,
+      title: "Diet Health Tracking",
+      description: "Log allergies, weight changes, and vet recommendations. SORTED ensures you never accidentally order the wrong formula.",
+      large: false
+    }
   ]
 
   return (
-    <section className="py-24 lg:py-32 bg-white" id="features">
-      <div className="mx-auto max-w-7xl px-6">
-        <div className="text-center max-w-3xl mx-auto mb-20" data-animate>
-          <div className="text-sorted-600 font-bold text-sm uppercase tracking-wider mb-4">Features</div>
-          <h2 className="text-4xl lg:text-5xl font-extrabold tracking-tight text-stone-900 mb-6">Smarter than any subscription.</h2>
-          <p className="text-lg text-stone-500">Subscriptions are just calendars. SORTED is a brain that thinks, compares, and optimizes.</p>
-        </div>
+    <section id="features" className="py-24 bg-cream">
+      <div className="max-w-6xl mx-auto px-6">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center mb-16"
+        >
+          <span className="text-sage font-mono-display text-sm uppercase tracking-wider">Features</span>
+          <h2 className="font-display font-bold text-4xl md:text-5xl text-ink mt-4 mb-4">
+            Smarter than any subscription
+          </h2>
+          <p className="text-lg text-ink-muted max-w-2xl mx-auto">
+            Subscriptions are just calendars. SORTED is a brain that thinks, compares, and optimizes.
+          </p>
+        </motion.div>
 
-        <div className="bento-grid" data-stagger>
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {features.map((feature, i) => (
-            <div 
-              key={i} 
-              className={`${feature.large ? 'bento-large' : 'bento-small'} bg-stone-50 rounded-3xl p-8 border border-stone-100 hover:border-${feature.color === 'warm' ? 'warm' : 'sorted'}-200 hover-lift relative overflow-hidden group`}
-              data-animate="spring"
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.1 }}
+              className={`bg-white rounded-2xl p-8 hover-lift ${feature.large ? 'md:col-span-2 lg:col-span-1' : ''}`}
             >
-              <div className="relative z-10 max-w-md">
-                <div className={`w-12 h-12 rounded-2xl ${feature.color === 'warm' ? 'bg-warm-100 text-warm-600' : 'bg-sorted-100 text-sorted-600'} flex items-center justify-center mb-5 text-2xl`}>
-                  <feature.icon className="w-6 h-6" />
-                </div>
-                <h3 className="text-2xl font-bold text-stone-900 mb-3">{feature.title}</h3>
-                <p className="text-stone-500 leading-relaxed">{feature.desc}</p>
-                {feature.badge && (
-                  <div className="mt-6 inline-flex items-center gap-2 text-sorted-600 font-semibold text-sm">
-                    <span className="w-2 h-2 rounded-full bg-sorted-500 animate-pulse" />
-                    {feature.badge}
-                  </div>
-                )}
-                {feature.title === "Smart Price Comparison" && (
-                  <div className="mt-6 flex items-center gap-3">
-                    <div className="px-3 py-1 rounded-full bg-white border border-stone-200 text-xs font-bold text-stone-600">Amazon</div>
-                    <div className="px-3 py-1 rounded-full bg-warm-50 border border-warm-200 text-xs font-bold text-warm-600">Chewy -12%</div>
-                    <div className="px-3 py-1 rounded-full bg-white border border-stone-200 text-xs font-bold text-stone-600">Petco</div>
-                  </div>
-                )}
+              <div className="h-40 rounded-xl overflow-hidden mb-5 bg-cream flex items-center justify-center">
+                <img
+                  src={feature.image}
+                  alt={feature.title}
+                  className="w-full h-full object-contain p-2"
+                />
               </div>
-              <div className={`absolute bottom-0 right-0 w-80 h-80 ${feature.color === 'warm' ? 'bg-warm-50' : 'bg-sorted-50'} rounded-full -mr-20 -mb-20 opacity-60 group-hover:scale-110 transition-transform duration-700`} />
-            </div>
+              <h3 className="font-display font-semibold text-lg text-ink mb-3">{feature.title}</h3>
+              <p className="text-sm text-ink-muted leading-relaxed">{feature.description}</p>
+            </motion.div>
           ))}
         </div>
       </div>
@@ -491,23 +626,37 @@ function Features() {
 
 function Demo() {
   return (
-    <section className="py-24 lg:py-32 bg-sorted-50" id="demo">
-      <div className="mx-auto max-w-7xl px-6">
-        <div className="text-center max-w-3xl mx-auto mb-16" data-animate>
-          <div className="text-sorted-600 font-bold text-sm uppercase tracking-wider mb-4">See It In Action</div>
-          <h2 className="text-4xl lg:text-5xl font-extrabold tracking-tight text-stone-900 mb-6">This is what calm feels like.</h2>
-          <p className="text-lg text-stone-500">Watch SORTED handle a real reorder scenario — from prediction to delivery confirmation.</p>
-        </div>
+    <section className="py-24 lg:py-32 bg-sage/5" id="demo">
+      <div className="max-w-6xl mx-auto px-6">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center mb-16"
+        >
+          <span className="text-sage font-mono-display text-sm uppercase tracking-wider">See It In Action</span>
+          <h2 className="font-display font-bold text-4xl md:text-5xl text-ink mt-4 mb-4">
+            This is what calm feels like
+          </h2>
+          <p className="text-lg text-ink-muted max-w-2xl mx-auto">
+            Watch SORTED handle a real reorder scenario — from prediction to delivery confirmation.
+          </p>
+        </motion.div>
 
-        <div className="max-w-xl mx-auto" data-animate="spring">
-          <div className="bg-white rounded-[2.5rem] shadow-2xl shadow-stone-900/10 border border-stone-100 overflow-hidden">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="max-w-xl mx-auto"
+        >
+          <div className="bg-white rounded-[2.5rem] shadow-2xl shadow-ink/10 border border-cream-dark overflow-hidden">
             {/* Phone Header */}
-            <div className="bg-white border-b border-stone-100 pt-8 pb-4 px-6 flex items-center justify-center relative">
-              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-28 h-7 bg-stone-900 rounded-b-2xl" />
+            <div className="bg-white border-b border-cream-dark pt-8 pb-4 px-6 flex items-center justify-center relative">
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-28 h-7 bg-ink rounded-b-2xl" />
               <div className="text-center">
-                <div className="font-bold text-stone-900">SORTED</div>
-                <div className="text-xs text-sorted-500 flex items-center justify-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-sorted-500 animate-gentle-pulse" />
+                <div className="font-bold text-ink">SORTED</div>
+                <div className="text-xs text-sage flex items-center justify-center gap-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-sage animate-pulse" />
                   Online
                 </div>
               </div>
@@ -515,7 +664,7 @@ function Demo() {
             {/* Chat Area */}
             <ChatSimulation messages={demoChatMessages} isDemo />
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   )
@@ -529,7 +678,7 @@ function Testimonials() {
       name: "Jessica M.",
       role: "Golden Retriever mom, Austin",
       initials: "JM",
-      color: "sorted"
+      color: "sage"
     },
     {
       stars: 5,
@@ -537,7 +686,7 @@ function Testimonials() {
       name: "David K.",
       role: "Multi-cat dad, Seattle",
       initials: "DK",
-      color: "warm"
+      color: "coral"
     },
     {
       stars: 5,
@@ -545,41 +694,51 @@ function Testimonials() {
       name: "Amanda R.",
       role: "French Bulldog owner, Miami",
       initials: "AR",
-      color: "sorted"
+      color: "sage"
     }
   ]
 
   return (
     <section className="py-24 lg:py-32 bg-white">
-      <div className="mx-auto max-w-7xl px-6">
-        <div className="text-center max-w-3xl mx-auto mb-20" data-animate>
-          <div className="text-sorted-600 font-bold text-sm uppercase tracking-wider mb-4">Loved by Pet Parents</div>
-          <h2 className="text-4xl lg:text-5xl font-extrabold tracking-tight text-stone-900 mb-6">5,000+ bowls kept full.</h2>
-        </div>
+      <div className="max-w-6xl mx-auto px-6">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center mb-16"
+        >
+          <span className="text-sage font-mono-display text-sm uppercase tracking-wider">Loved by Pet Parents</span>
+          <h2 className="font-display font-bold text-4xl md:text-5xl text-ink mt-4 mb-4">
+            5,000+ bowls kept full
+          </h2>
+        </motion.div>
 
-        <div className="grid md:grid-cols-3 gap-8" data-stagger>
+        <div className="grid md:grid-cols-3 gap-8">
           {testimonials.map((t, i) => (
-            <div 
-              key={i} 
-              className="bg-stone-50 rounded-3xl p-8 border border-stone-100 hover:border-sorted-200 hover-lift"
-              data-animate="spring"
+            <motion.div 
+              key={i}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.15 }}
+              className="bg-cream rounded-2xl p-8 border border-cream-dark hover-lift"
             >
               <div className="flex items-center gap-1 mb-4">
                 {Array.from({ length: t.stars }).map((_, j) => (
-                  <Star key={j} className="w-5 h-5 text-warm-500 fill-warm-500" />
+                  <Star key={j} className="w-5 h-5 text-coral fill-coral" />
                 ))}
               </div>
-              <p className="text-stone-600 leading-relaxed mb-6">{t.text}</p>
+              <p className="text-ink-muted leading-relaxed mb-6">{t.text}</p>
               <div className="flex items-center gap-3">
-                <div className={`w-10 h-10 rounded-full ${t.color === 'warm' ? 'bg-warm-100 text-warm-600' : 'bg-sorted-100 text-sorted-600'} flex items-center justify-center font-bold`}>
+                <div className={`w-10 h-10 rounded-full ${t.color === 'coral' ? 'bg-coral/10 text-coral' : 'bg-sage/10 text-sage'} flex items-center justify-center font-bold`}>
                   {t.initials}
                 </div>
                 <div>
-                  <div className="font-semibold text-stone-900 text-sm">{t.name}</div>
-                  <div className="text-xs text-stone-400">{t.role}</div>
+                  <div className="font-semibold text-ink text-sm">{t.name}</div>
+                  <div className="text-xs text-ink-muted">{t.role}</div>
                 </div>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
       </div>
@@ -638,40 +797,53 @@ function Pricing() {
   ]
 
   return (
-    <section className="py-24 lg:py-32 bg-stone-50" id="pricing">
-      <div className="mx-auto max-w-7xl px-6">
-        <div className="text-center max-w-3xl mx-auto mb-20" data-animate>
-          <div className="text-sorted-600 font-bold text-sm uppercase tracking-wider mb-4">Pricing</div>
-          <h2 className="text-4xl lg:text-5xl font-extrabold tracking-tight text-stone-900 mb-6">Simple, transparent pricing.</h2>
-          <p className="text-lg text-stone-500">Start free. Upgrade when you're ready to go full autopilot. No hidden fees, ever.</p>
-        </div>
+    <section id="pricing" className="py-24 bg-white">
+      <div className="max-w-6xl mx-auto px-6">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center mb-16"
+        >
+          <span className="text-sage font-mono-display text-sm uppercase tracking-wider">Pricing</span>
+          <h2 className="font-display font-bold text-4xl md:text-5xl text-ink mt-4 mb-4">
+            Simple, transparent pricing
+          </h2>
+          <p className="text-lg text-ink-muted max-w-2xl mx-auto">
+            Start free. Upgrade when you're ready to go full autopilot. No hidden fees, ever.
+          </p>
+        </motion.div>
 
-        <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto items-start" data-stagger>
+        <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
           {plans.map((plan, i) => (
-            <div 
-              key={i} 
-              className={`bg-white rounded-3xl p-8 border ${plan.popular ? 'border-sorted-200 ring-2 ring-sorted-100' : 'border-stone-200 hover:border-stone-300'} hover-lift`}
-              data-animate="spring"
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.15 }}
+              className={`relative rounded-2xl p-8 ${plan.popular ? 'bg-ink text-cream' : 'bg-cream border border-cream-dark'}`}
             >
               {plan.popular && (
-                <div className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-sorted-50 border border-sorted-100 text-sorted-700 text-xs font-bold uppercase tracking-wider mb-4">
-                  <Star className="w-3 h-3 fill-sorted-500 text-sorted-500" />
+                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-coral text-white px-4 py-1 rounded-full text-xs font-medium">
                   Most Popular
                 </div>
               )}
               
-              <h3 className="text-xl font-bold text-stone-900 mb-2">{plan.name}</h3>
-              <p className="text-sm text-stone-500 mb-6">{plan.description}</p>
+              <h3 className="font-display font-semibold text-xl mb-2">{plan.name}</h3>
+              <p className={`text-sm mb-6 ${plan.popular ? 'text-cream/70' : 'text-ink-muted'}`}>
+                {plan.description}
+              </p>
               
               <div className="mb-6">
-                <span className="text-4xl font-extrabold text-stone-900">{plan.price}</span>
-                {plan.period && <span className="text-sm text-stone-500">{plan.period}</span>}
+                <span className="font-display font-bold text-4xl">{plan.price}</span>
+                {plan.period && <span className={`text-sm ${plan.popular ? 'text-cream/70' : 'text-ink-muted'}`}>{plan.period}</span>}
               </div>
               
-              <button className={`w-full py-3 rounded-full text-sm font-semibold mb-8 transition-all hover:-translate-y-0.5 active:translate-y-0 ${
+              <button className={`w-full py-3 rounded-full text-sm font-medium mb-8 transition-colors ${
                 plan.popular
-                  ? 'bg-sorted-600 text-white hover:bg-sorted-700 hover:shadow-lg hover:shadow-sorted-500/20'
-                  : 'bg-stone-100 text-stone-700 hover:bg-stone-200'
+                  ? 'bg-cream text-ink hover:bg-cream-dark'
+                  : 'bg-ink text-cream hover:bg-ink-light'
               }`}>
                 {plan.cta}
               </button>
@@ -679,12 +851,12 @@ function Pricing() {
               <ul className="space-y-3">
                 {plan.features.map((feature, j) => (
                   <li key={j} className="flex items-start gap-3 text-sm">
-                    <Check className={`w-4 h-4 mt-0.5 flex-shrink-0 ${plan.popular ? 'text-sorted-500' : 'text-stone-400'}`} />
-                    <span className="text-stone-600">{feature}</span>
+                    <Check className={`w-4 h-4 mt-0.5 flex-shrink-0 ${plan.popular ? 'text-sage-light' : 'text-sage'}`} />
+                    <span className={plan.popular ? 'text-cream/80' : 'text-ink-muted'}>{feature}</span>
                   </li>
                 ))}
               </ul>
-            </div>
+            </motion.div>
           ))}
         </div>
       </div>
@@ -723,29 +895,39 @@ function FAQ() {
   const [openIndex, setOpenIndex] = useState<number | null>(0)
 
   return (
-    <section id="faq" className="py-24 lg:py-32 bg-white">
+    <section id="faq" className="py-24 bg-cream">
       <div className="max-w-3xl mx-auto px-6">
-        <div className="text-center mb-16" data-animate>
-          <div className="text-sorted-600 font-bold text-sm uppercase tracking-wider mb-4">FAQ</div>
-          <h2 className="text-4xl lg:text-5xl font-extrabold tracking-tight text-stone-900 mb-6">Questions? Answered.</h2>
-        </div>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center mb-16"
+        >
+          <span className="text-sage font-mono-display text-sm uppercase tracking-wider">FAQ</span>
+          <h2 className="font-display font-bold text-4xl md:text-5xl text-ink mt-4 mb-4">
+            Questions? Answered.
+          </h2>
+        </motion.div>
 
         <div className="space-y-4">
           {faqs.map((faq, i) => (
-            <div 
-              key={i} 
-              className="bg-stone-50 rounded-2xl overflow-hidden border border-stone-100"
-              data-animate="spring"
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.05 }}
+              className="bg-white rounded-xl overflow-hidden"
             >
               <button
                 onClick={() => setOpenIndex(openIndex === i ? null : i)}
-                className="w-full flex items-center justify-between p-6 text-left hover:bg-stone-100/50 transition-colors"
+                className="w-full flex items-center justify-between p-6 text-left"
               >
-                <span className="font-semibold text-stone-900 pr-4">{faq.q}</span>
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 transition-all ${
-                  openIndex === i ? 'bg-sorted-600 text-white rotate-90' : 'bg-white text-stone-400 border border-stone-200'
+                <span className="font-display font-medium text-ink pr-4">{faq.q}</span>
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 transition-colors ${
+                  openIndex === i ? 'bg-ink text-cream' : 'bg-cream-dark text-ink'
                 }`}>
-                  <ChevronRight className="w-4 h-4" />
+                  {openIndex === i ? <X className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
                 </div>
               </button>
               <AnimatePresence>
@@ -757,13 +939,13 @@ function FAQ() {
                     transition={{ duration: 0.3 }}
                     className="overflow-hidden"
                   >
-                    <p className="px-6 pb-6 text-sm text-stone-600 leading-relaxed">
+                    <p className="px-6 pb-6 text-sm text-ink-muted leading-relaxed">
                       {faq.a}
                     </p>
                   </motion.div>
                 )}
               </AnimatePresence>
-            </div>
+            </motion.div>
           ))}
         </div>
       </div>
@@ -773,34 +955,35 @@ function FAQ() {
 
 function CTA() {
   return (
-    <section className="py-24 lg:py-32 bg-warm-50">
+    <section className="py-24 bg-ink text-cream">
       <div className="max-w-4xl mx-auto px-6 text-center">
-        <div data-animate>
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-sorted-50 border border-sorted-100 text-sorted-700 text-xs font-bold uppercase tracking-wider mb-8">
-            <Sparkles className="w-3 h-3" />
-            Start with 20 approvals. Then go full autopilot.
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+        >
+          <div className="w-16 h-16 bg-sage rounded-2xl flex items-center justify-center mx-auto mb-8">
+            <Dog className="w-8 h-8 text-cream" />
           </div>
           
-          <h2 className="text-4xl lg:text-5xl xl:text-6xl font-extrabold tracking-tight text-stone-900 mb-6">
-            Ready to never worry<br />about pet food again?
+          <h2 className="font-display font-bold text-4xl md:text-5xl mb-6">
+            Ready to never worry about pet food again?
           </h2>
           
-          <p className="text-lg text-stone-500 mb-10 max-w-2xl mx-auto">
-            Join 5,000+ pet parents who've sorted their pet's life. Start free on Telegram — no credit card required.
+          <p className="text-lg text-cream/70 mb-10 max-w-2xl mx-auto">
+            Join 5,000+ pet parents who've sorted their pet's life. 
+            Start free on Telegram — no credit card required.
           </p>
           
-          <a 
-            href="#start" 
-            className="inline-flex items-center gap-2 bg-sorted-600 text-white px-10 py-4 rounded-full text-lg font-semibold hover:bg-sorted-700 transition-all hover:shadow-xl hover:shadow-sorted-500/20 hover:-translate-y-0.5 active:translate-y-0"
-          >
+          <button className="bg-cream text-ink px-10 py-4 rounded-full text-base font-medium hover:bg-cream-dark transition-all hover:shadow-lg inline-flex items-center gap-2">
             Start on Telegram
             <ArrowRight className="w-5 h-5" />
-          </a>
+          </button>
           
-          <p className="text-sm text-stone-400 mt-6">
+          <p className="text-sm text-cream/50 mt-6">
             Free forever plan available. Upgrade to Autopilot anytime.
           </p>
-        </div>
+        </motion.div>
       </div>
     </section>
   )
@@ -808,66 +991,66 @@ function CTA() {
 
 function Footer() {
   return (
-    <footer className="bg-stone-900 text-stone-400 py-16">
-      <div className="max-w-7xl mx-auto px-6">
+    <footer className="bg-cream-dark py-16">
+      <div className="max-w-6xl mx-auto px-6">
         <div className="grid md:grid-cols-4 gap-12 mb-12">
           <div>
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 bg-sorted-600 rounded-lg flex items-center justify-center">
-                <Dog className="w-5 h-5 text-white" />
+              <div className="w-8 h-8 bg-sage rounded-lg flex items-center justify-center">
+                <Dog className="w-5 h-5 text-cream" />
               </div>
-              <span className="font-extrabold text-lg text-white">SORTED</span>
+              <span className="font-display font-bold text-lg text-ink">SORTED</span>
             </div>
-            <p className="text-sm">
+            <p className="text-sm text-ink-muted">
               Your pet's life, sorted. AI-powered food management for modern pet parents.
             </p>
           </div>
           
           <div>
-            <h4 className="font-semibold text-sm text-white mb-4">Product</h4>
+            <h4 className="font-display font-semibold text-sm text-ink mb-4">Product</h4>
             <ul className="space-y-2">
-              <li><a href="#features" className="text-sm hover:text-white transition-colors">Features</a></li>
-              <li><a href="#pricing" className="text-sm hover:text-white transition-colors">Pricing</a></li>
-              <li><a href="#" className="text-sm hover:text-white transition-colors">Telegram Bot</a></li>
-              <li><a href="#" className="text-sm hover:text-white transition-colors">API</a></li>
+              <li><a href="#features" className="text-sm text-ink-muted hover:text-ink transition-colors">Features</a></li>
+              <li><a href="#pricing" className="text-sm text-ink-muted hover:text-ink transition-colors">Pricing</a></li>
+              <li><a href="#" className="text-sm text-ink-muted hover:text-ink transition-colors">Telegram Bot</a></li>
+              <li><a href="#" className="text-sm text-ink-muted hover:text-ink transition-colors">API</a></li>
             </ul>
           </div>
           
           <div>
-            <h4 className="font-semibold text-sm text-white mb-4">Company</h4>
+            <h4 className="font-display font-semibold text-sm text-ink mb-4">Company</h4>
             <ul className="space-y-2">
-              <li><a href="#" className="text-sm hover:text-white transition-colors">About</a></li>
-              <li><a href="#" className="text-sm hover:text-white transition-colors">Blog</a></li>
-              <li><a href="#" className="text-sm hover:text-white transition-colors">Careers</a></li>
-              <li><a href="#" className="text-sm hover:text-white transition-colors">Press</a></li>
+              <li><a href="#" className="text-sm text-ink-muted hover:text-ink transition-colors">About</a></li>
+              <li><a href="#" className="text-sm text-ink-muted hover:text-ink transition-colors">Blog</a></li>
+              <li><a href="#" className="text-sm text-ink-muted hover:text-ink transition-colors">Careers</a></li>
+              <li><a href="#" className="text-sm text-ink-muted hover:text-ink transition-colors">Press</a></li>
             </ul>
           </div>
           
           <div>
-            <h4 className="font-semibold text-sm text-white mb-4">Support</h4>
+            <h4 className="font-display font-semibold text-sm text-ink mb-4">Support</h4>
             <ul className="space-y-2">
-              <li><a href="#" className="text-sm hover:text-white transition-colors">Help Center</a></li>
-              <li><a href="#" className="text-sm hover:text-white transition-colors">Contact</a></li>
-              <li><a href="#" className="text-sm hover:text-white transition-colors">Privacy</a></li>
-              <li><a href="#" className="text-sm hover:text-white transition-colors">Terms</a></li>
+              <li><a href="#" className="text-sm text-ink-muted hover:text-ink transition-colors">Help Center</a></li>
+              <li><a href="#" className="text-sm text-ink-muted hover:text-ink transition-colors">Contact</a></li>
+              <li><a href="#" className="text-sm text-ink-muted hover:text-ink transition-colors">Privacy</a></li>
+              <li><a href="#" className="text-sm text-ink-muted hover:text-ink transition-colors">Terms</a></li>
             </ul>
           </div>
         </div>
         
-        <div className="border-t border-stone-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-sm">
+        <div className="border-t border-cream pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+          <p className="text-sm text-ink-muted">
             © 2026 SORTED. All rights reserved.
           </p>
           <div className="flex items-center gap-4">
-            <a href="#" className="hover:text-white transition-colors">
+            <a href="#" className="text-ink-muted hover:text-ink transition-colors">
               <span className="sr-only">Twitter</span>
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
             </a>
-            <a href="#" className="hover:text-white transition-colors">
+            <a href="#" className="text-ink-muted hover:text-ink transition-colors">
               <span className="sr-only">Instagram</span>
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
             </a>
-            <a href="#" className="hover:text-white transition-colors">
+            <a href="#" className="text-ink-muted hover:text-ink transition-colors">
               <span className="sr-only">Telegram</span>
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.479.329-.913.489-1.302.481-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
             </a>
@@ -878,17 +1061,14 @@ function Footer() {
   )
 }
 
-/* ── Main App ── */
 function App() {
-  useScrollReveal()
-
   return (
     <div className="grain">
       <Navbar />
       <Hero />
-      <TrustBar />
       <ProblemValue />
       <HowItWorks />
+      <LifestyleShowcase />
       <Features />
       <Demo />
       <Testimonials />
