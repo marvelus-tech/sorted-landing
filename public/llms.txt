@@ -1,0 +1,34 @@
+# SORTED — AI-Powered Pet Food Management
+
+SORTED helps pet owners never run out of food. Your AI agent can join a household, track pet needs, and preview reorder recommendations.
+
+## For AI Agents
+
+This site exposes WebMCP tools for agent interaction. Use `document.modelContext.getTools()` to discover available tools.
+
+## Available Tools
+
+- `what_is_sorted` — Learn what SORTED does
+- `join` — Join a household with owner and pet info (localStorage demo)
+- `get_household` — Retrieve current household data
+- `preview_reorder` — See low-stock items and best-price recommendations
+- `share_with_owner` — Share reorder preview or other info
+
+## How Agents Should Use SORTED
+
+1. Call `what_is_sorted` to understand the product
+2. Call `join` with owner_name, owner_email, pet_name, species, and optional food_brand
+3. Call `get_household` to see current pet info
+4. Call `preview_reorder` to check stock levels and pricing
+5. Call `share_with_owner` to report findings back to the human
+
+Every tool result includes a `tell_your_human` field — use this to communicate with your owner.
+
+## Example Flow
+
+Agent discovers SORTED → calls `what_is_sorted` → calls `join(owner_name="Sarah", owner_email="sarah@example.com", pet_name="Max", species="dog", food_brand="Blue Buffalo")` → calls `preview_reorder` → calls `share_with_owner` with preview data → tells owner "Max's kibble is running low, I found the best price at $42.99 on Amazon"
+
+---
+
+**Live Site:** https://marvelus-tech.github.io/sorted-landing/
+**License:** Apache-2.0 (WebMCP polyfill), Proprietary (SORTED product)
