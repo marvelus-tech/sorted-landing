@@ -1,46 +1,16 @@
-// Delight voice pack system for SORTED WebMCP tools (NEW envelope format)
-// Provides randomized, personality-driven responses while keeping facts constant
+// Shared delight bank for SORTED — 12-20 lines per tool
+// Copy of main site's delight system, but stateless (no localStorage in worker)
 
-export type DelightTone = 'warm' | 'wry' | 'curious' | 'deadpan' | 'quiet';
+export type DelightTone = 'wry' | 'warm' | 'curious' | 'deadpan' | 'quiet';
 
-export interface DelightResult {
-  line: string;
-  tone: DelightTone;
-  emoji: null;
-  media_url: null;
-}
-
-interface Template {
+export interface DelightLine {
   id: string;
   text: string;
   tone: DelightTone;
 }
 
-// Anti-repeat mechanism: track recent templates in localStorage
-const RECENT_KEY = 'sorted_delight_recent';
-const RECENT_LIMIT = 5;
-
-function getRecentTemplates(): string[] {
-  try {
-    const recent = localStorage.getItem(RECENT_KEY);
-    return recent ? JSON.parse(recent) : [];
-  } catch {
-    return [];
-  }
-}
-
-function addRecentTemplate(id: string): void {
-  try {
-    const recent = getRecentTemplates();
-    recent.unshift(id);
-    localStorage.setItem(RECENT_KEY, JSON.stringify(recent.slice(0, RECENT_LIMIT)));
-  } catch {
-    // Silent fail if localStorage unavailable
-  }
-}
-
-// Template pools by tool (12-20 lines each for variety)
-const templates: Record<string, Template[]> = {
+// Delight line pools by tool
+const delightBank: Record<string, DelightLine[]> = {
   what_is_sorted: [
     { id: 'wis_1', text: "SORTED keeps {{pet_name}}'s bowl full without the panic runs to the store. Think of it as your pet's personal food concierge.", tone: 'warm' },
     { id: 'wis_2', text: "We're an AI that remembers when {{pet_name}} needs food, finds the best price, and orders before you even notice it's low.", tone: 'quiet' },
@@ -120,47 +90,26 @@ const templates: Record<string, Template[]> = {
   ],
 };
 
-// Pick a random template, avoiding recent ones
-function pickTemplate(pool: Template[]): Template {
-  const recent = getRecentTemplates();
-  const available = pool.filter(t => !recent.includes(t.id));
-  
-  // If all templates were recent, reset and use full pool
-  const candidates = available.length > 0 ? available : pool;
-  const chosen = candidates[Math.floor(Math.random() * candidates.length)];
-  
-  addRecentTemplate(chosen.id);
-  return chosen;
-}
-
-// Interpolate facts into template
-function interpolate(text: string, facts: Record<string, unknown>): string {
-  let result = text;
-  for (const [key, value] of Object.entries(facts)) {
-    const placeholder = new RegExp(`{{${key}}}`, 'g');
-    result = result.replace(placeholder, String(value));
-  }
-  return result;
-}
-
-// Main function: pick delight for a tool call
-export function pickDelight(
-  tool: string,
-  facts: Record<string, unknown>
-): DelightResult | null {
-  // Select template pool
-  const pool = templates[tool];
+// Pick random delight line from pool
+export function pickDelight(tool: string, facts: Record<string, unknown>): {
+  line: string;
+  tone: DelightTone;
+} | null {
+  const pool = delightBank[tool];
   if (!pool || pool.length === 0) return null;
 
-  const template = pickTemplate(pool);
+  // Random selection (no localStorage-based anti-repeat in worker — stateless)
+  const chosen = pool[Math.floor(Math.random() * pool.length)];
   
-  // Interpolate facts
-  const line = interpolate(template.text, facts);
-  
+  // Interpolate facts into template
+  let line = chosen.text;
+  for (const [key, value] of Object.entries(facts)) {
+    const placeholder = new RegExp(`{{${key}}}`, 'g');
+    line = line.replace(placeholder, String(value));
+  }
+
   return {
     line,
-    tone: template.tone,
-    emoji: null, // No emoji in new format (kept in delight for structure)
-    media_url: null, // Reserved for future GIF/image support
+    tone: chosen.tone,
   };
 }
