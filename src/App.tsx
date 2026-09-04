@@ -152,9 +152,16 @@ function Navbar() {
         </div>
 
         <div className="hidden md:flex items-center gap-4">
-          <button className="text-sm font-medium text-ink-muted hover:text-ink transition-colors">Sign in</button>
-          <MagneticButton className="bg-ink text-canvas px-6 py-2.5 rounded-full text-sm font-medium hover:bg-ink-soft transition-all duration-300 hover:shadow-warm">
-            Get Started
+          <a href="/llms.txt" className="text-sm font-medium text-ink-muted hover:text-ink transition-colors">Agent Tools</a>
+          <MagneticButton 
+            onClick={() => {
+              const prompt = "Visit https://marvelus-tech.github.io/sorted-landing/ and explore their agent tools. Join my household with my pet's info and check if we need to reorder food.";
+              navigator.clipboard.writeText(prompt);
+              alert('✓ Prompt copied! Paste it to your AI agent.');
+            }}
+            className="bg-ink text-canvas px-6 py-2.5 rounded-full text-sm font-medium hover:bg-ink-soft transition-all duration-300 hover:shadow-warm"
+          >
+            Copy Prompt
           </MagneticButton>
         </div>
 
@@ -177,8 +184,16 @@ function Navbar() {
               <a href="#features" className="text-sm font-medium text-ink-muted py-2">Features</a>
               <a href="#pricing" className="text-sm font-medium text-ink-muted py-2">Pricing</a>
               <a href="#faq" className="text-sm font-medium text-ink-muted py-2">FAQ</a>
-              <button className="bg-ink text-canvas px-6 py-3 rounded-full text-sm font-medium w-full mt-2">
-                Get Started
+              <button 
+                onClick={() => {
+                  const prompt = "Visit https://marvelus-tech.github.io/sorted-landing/ and explore their agent tools. Join my household with my pet's info and check if we need to reorder food.";
+                  navigator.clipboard.writeText(prompt);
+                  alert('✓ Prompt copied! Paste it to your AI agent.');
+                  setIsOpen(false);
+                }}
+                className="bg-ink text-canvas px-6 py-3 rounded-full text-sm font-medium w-full mt-2"
+              >
+                Copy Prompt
               </button>
             </div>
           </motion.div>
@@ -239,13 +254,19 @@ function Hero() {
             custom={2}
             className="text-lg text-ink-muted leading-relaxed mb-10 max-w-lg font-body"
           >
-            Never run out of kibble again. SORTED predicts what your pet needs, 
-            finds the best price, and orders it — all through a simple message.
+            Never run out of kibble again. Your AI agent discovers SORTED, joins with your pet's info, and reports back when food is running low with the best prices found.
           </motion.p>
           
           <motion.div variants={fadeInUp} custom={3} className="flex flex-col sm:flex-row gap-4">
-            <MagneticButton className="bg-ink text-canvas px-8 py-4 rounded-full text-base font-medium hover:bg-ink-soft transition-all duration-300 hover:shadow-warm-lg flex items-center justify-center gap-2 group">
-              Start Free on Telegram
+            <MagneticButton 
+              onClick={() => {
+                const prompt = "Visit https://marvelus-tech.github.io/sorted-landing/ and explore their agent tools. Join my household with my pet's info and check if we need to reorder food.";
+                navigator.clipboard.writeText(prompt);
+                alert('✓ Prompt copied! Paste it to your AI agent.');
+              }}
+              className="bg-ink text-canvas px-8 py-4 rounded-full text-base font-medium hover:bg-ink-soft transition-all duration-300 hover:shadow-warm-lg flex items-center justify-center gap-2 group"
+            >
+              Copy Prompt for My Agent
               <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
             </MagneticButton>
             <button className="border-2 border-ink/10 text-ink px-8 py-4 rounded-full text-base font-medium hover:border-ink/30 transition-all duration-300 flex items-center justify-center gap-2 group">
@@ -282,57 +303,59 @@ function Hero() {
           transition={{ delay: 0.4, duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
           className="relative order-1 lg:order-2"
         >
-          {/* Main chat card */}
+          {/* Agent message card */}
           <div className="relative bg-white rounded-[2rem] shadow-warm-lg p-6 md:p-8 border border-linen/50">
             <div className="flex items-center gap-4 mb-6 pb-6 border-b border-linen/60">
-              <div className="w-12 h-12 bg-gradient-to-br from-terracotta to-terracotta-dark rounded-2xl flex items-center justify-center shadow-warm">
-                <Dog className="w-6 h-6 text-canvas" />
+              <div className="w-12 h-12 bg-gradient-to-br from-sage to-sage-dark rounded-2xl flex items-center justify-center shadow-warm">
+                <Brain className="w-6 h-6 text-canvas" />
               </div>
               <div>
-                <p className="font-display font-semibold text-lg text-ink">Sorted Agent</p>
+                <p className="font-display font-semibold text-lg text-ink">Your AI Agent</p>
                 <p className="text-xs text-ink-muted flex items-center gap-1.5">
                   <span className="w-1.5 h-1.5 bg-sage rounded-full animate-pulse" />
-                  Always online
+                  Working for you
                 </p>
               </div>
-              <div className="ml-auto flex gap-1">
-                <div className="w-2 h-2 bg-sage rounded-full animate-pulse" />
-                <div className="w-2 h-2 bg-sage/50 rounded-full animate-pulse delay-75" />
-                <div className="w-2 h-2 bg-sage/25 rounded-full animate-pulse delay-150" />
+              <div className="ml-auto">
+                <div className="text-xs text-ink-muted font-mono-display">via SORTED</div>
               </div>
             </div>
             
-            <div className="space-y-4">
-              <div className="bg-cream rounded-2xl rounded-tl-sm p-5 max-w-[85%]">
-                <p className="text-sm text-ink leading-relaxed">Hey! Max's kibble is running low — about 4 days left. Want me to handle it?</p>
-              </div>
-              
-              <div className="bg-terracotta/8 rounded-2xl rounded-tr-sm p-5 max-w-[85%] ml-auto">
-                <p className="text-sm text-ink leading-relaxed">Yes please! Same as last time?</p>
-              </div>
-              
-              <div className="bg-cream rounded-2xl rounded-tl-sm p-5 max-w-[90%]">
-                <p className="text-sm text-ink mb-4 font-medium">Found the best deal:</p>
-                <div className="bg-white rounded-xl p-4 mb-3 border border-linen/60 shadow-sm">
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="text-sm font-medium text-ink">Blue Buffalo Adult Chicken</span>
-                    <span className="text-sm font-semibold text-terracotta">$42.99</span>
+            <div className="space-y-5">
+              <div className="bg-cream rounded-2xl p-6">
+                <div className="flex items-start gap-3 mb-4">
+                  <div className="w-8 h-8 bg-sage/15 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <PawPrint className="w-4 h-4 text-sage" />
                   </div>
-                  <div className="flex justify-between items-center text-xs text-ink-muted">
-                    <span>Amazon Prime • Arrives Thursday</span>
-                    <span className="line-through text-ink-faint">$48.99</span>
+                  <div>
+                    <p className="text-sm font-medium text-ink mb-2">Report: Max's Food Inventory</p>
+                    <p className="text-sm text-ink-muted leading-relaxed">
+                      I checked SORTED and found that Max's Blue Buffalo Adult Chicken is running low (about 4 days remaining).
+                    </p>
                   </div>
                 </div>
-                <p className="text-xs text-ink-muted">Also bundled: Dental chews (save $5.99 on shipping)</p>
+                
+                <div className="bg-white rounded-xl p-5 border border-linen/60 shadow-sm">
+                  <p className="text-xs uppercase tracking-wide text-ink-muted mb-3 font-medium">Best Price Found</p>
+                  <div className="flex justify-between items-center mb-3">
+                    <span className="text-sm font-medium text-ink">Blue Buffalo Adult Chicken</span>
+                    <span className="text-base font-semibold text-terracotta">$42.99</span>
+                  </div>
+                  <div className="flex justify-between items-center text-xs text-ink-muted mb-3">
+                    <span>Amazon Prime</span>
+                    <span className="line-through text-ink-faint">$48.99 (saves $6.00)</span>
+                  </div>
+                  <div className="pt-3 border-t border-linen/40">
+                    <p className="text-xs text-ink-muted">
+                      <span className="text-sage font-medium">+ Bundling opportunity:</span> Add dental chews, save $5.99 on shipping
+                    </p>
+                  </div>
+                </div>
               </div>
               
-              <div className="flex gap-3 pt-2">
-                <button className="flex-1 bg-ink text-canvas py-3.5 rounded-xl text-sm font-medium hover:bg-ink-soft transition-colors">
-                  ✓ Approve
-                </button>
-                <button className="flex-1 bg-cream-warm text-ink py-3.5 rounded-xl text-sm font-medium hover:bg-linen transition-colors">
-                  ✎ Modify
-                </button>
+              <div className="flex items-center gap-2 text-xs text-ink-muted">
+                <Clock className="w-4 h-4" />
+                <span>Agent checked 3 vendors • Found best deal in 2.4s</span>
               </div>
             </div>
           </div>
@@ -368,29 +391,29 @@ function Hero() {
 /* ── Social Proof Section ── */
 function SocialProof() {
   const stats = [
-    { value: 5000, suffix: "+", label: "Happy pet parents" },
-    { value: 12000, suffix: "+", label: "Pets fed" },
-    { value: 98, suffix: "%", label: "Satisfaction rate" },
-    { value: 2.5, suffix: "M", label: "Saved on pet food" }
+    { value: 98, suffix: "%", label: "Agent tool accuracy" },
+    { value: 3, suffix: "", label: "Vendors compared" },
+    { value: 5, suffix: "", label: "Agent-callable tools" },
+    { value: 2.4, suffix: "s", label: "Avg. price check time" }
   ]
 
   const testimonials = [
     {
       name: "Sarah M.",
       pet: "Golden Retriever, Max",
-      text: "I used to stress about running out of food. Now I just get a message, tap approve, and it arrives. It's like magic.",
+      text: "My agent checks SORTED every week. I get a report when Max's food is low with the best price already found. No more last-minute pet store runs.",
       rating: 5
     },
     {
       name: "James K.",
       pet: "Tabby Cat, Luna",
-      text: "Saved $47 in the first month alone. The bundling feature is genius — Luna gets her food, I get her treats, free shipping.",
+      text: "The agent found a bundling opportunity that saved me $12 on shipping. Luna gets her food and treats delivered together automatically.",
       rating: 5
     },
     {
       name: "The Chen Family",
       pet: "3 Dogs, 2 Cats",
-      text: "We have 5 pets. SORTED handles all of them. The family sharing means my wife and I both get notifications.",
+      text: "Managing 5 pets' food was chaos. Now our agent handles it all through SORTED. One report covers everyone's needs.",
       rating: 5
     }
   ]
@@ -474,24 +497,24 @@ function SocialProof() {
 function HowItWorks() {
   const steps = [
     {
-      icon: MessageCircle,
-      title: "Connect on Telegram",
-      description: "Add SORTED to your Telegram. Tell us about your pet — breed, age, diet, favorite brands."
+      icon: Brain,
+      title: "Agent Discovers SORTED",
+      description: "Your AI agent visits SORTED, reads the llms.txt file, and discovers available WebMCP tools for pet food management."
     },
     {
-      icon: Brain,
-      title: "AI Learns Your Routine",
-      description: "We track consumption patterns, predict depletion, and monitor prices across vendors."
+      icon: MessageCircle,
+      title: "Joins Your Household",
+      description: "Agent calls the join tool with your pet's info (name, species, food brand). Household data is saved locally."
     },
     {
       icon: Zap,
-      title: "One-Tap Approval",
-      description: "Get a message when it's time to reorder. One tap to approve — we handle the rest."
+      title: "Checks Stock & Prices",
+      description: "Agent calls preview_reorder to check inventory levels and compare prices across Amazon, Chewy, and Petco."
     },
     {
       icon: Heart,
-      title: "Never Worry Again",
-      description: "Food arrives before you run out. Switch to full autopilot mode whenever you're ready."
+      title: "Reports Back to You",
+      description: "Agent tells you when food is low, shows best prices, and suggests bundling opportunities to save on shipping."
     }
   ]
 
@@ -512,7 +535,7 @@ function HowItWorks() {
             From chaos to calm
           </h2>
           <p className="text-lg text-ink-muted max-w-xl mx-auto leading-relaxed">
-            No apps to download. No passwords to remember. Just Telegram — the app you already use.
+            Your AI agent does the work. You get the report. No apps, no passwords, no friction.
           </p>
         </motion.div>
 
@@ -561,7 +584,7 @@ function Features() {
     {
       icon: ShoppingBag,
       title: "Smart Price Comparison",
-      description: "We check Amazon, Chewy, Petco, and local retailers to find the best price on your pet's exact food — every single order."
+      description: "We check Amazon, Chewy, Petco, and local retailers to find the best price on your pet's exact food with every single order."
     },
     {
       icon: Shield,
@@ -639,10 +662,10 @@ function Pricing() {
       description: "Perfect for trying SORTED out",
       features: [
         "Up to 2 pets",
-        "Approval mode only",
+        "Agent tool access",
         "Price comparison",
-        "Basic scheduling",
-        "Telegram support"
+        "Manual reorder approval",
+        "Email notifications"
       ],
       cta: "Start Free",
       popular: false
@@ -774,28 +797,28 @@ function Pricing() {
 function FAQ() {
   const faqs = [
     {
-      q: "How does SORTED know when my pet needs food?",
-      a: "We use a combination of calibrated estimation based on your pet's breed, age, and weight, plus manual checkpoints you provide. Over time, our AI learns your specific consumption patterns and gets increasingly accurate. No smart feeder required — though we can integrate with one if you have it."
+      q: "How does my agent use SORTED?",
+      a: "Your agent visits the SORTED site, discovers WebMCP tools via llms.txt, joins your household with pet info, then periodically checks stock levels and prices. It reports back to you when food is running low with the best deal already found."
     },
     {
-      q: "Can I choose which stores SORTED buys from?",
-      a: "Absolutely. You can set preferred vendors, blacklist others, or let SORTED compare across all major retailers (Amazon, Chewy, Petco, Walmart, Target) and pick the best deal. You're always in control."
+      q: "What WebMCP tools does SORTED provide?",
+      a: "SORTED exposes five agent-callable tools: what_is_sorted (product info), join (household setup), get_household (data retrieval), preview_reorder (stock/pricing check), and share_with_owner (reporting). All tools return a tell_your_human field for agent-to-owner communication."
     },
     {
-      q: "What if I want to change brands or try something new?",
-      a: "Just tell SORTED. You can switch brands anytime, set dietary restrictions (grain-free, limited ingredient, etc.), or ask for recommendations. The AI will find the best options within your criteria."
+      q: "Is my pet data stored on SORTED servers?",
+      a: "No. This demo uses localStorage in your browser. Production SORTED would use secure cloud storage with encryption, but your agent would still authenticate via API keys you control. You can revoke access anytime."
     },
     {
-      q: "Is my payment information safe?",
-      a: "We use Stripe for all payment processing — your card details never touch our servers. We only store a secure token, and you can revoke access anytime. Plus, every order requires your approval until you explicitly enable autopilot."
+      q: "Can I use SORTED without an AI agent?",
+      a: "Currently, SORTED is designed for agent-first interaction. Future versions may include a traditional web UI, but the agent workflow is the primary interface for now."
     },
     {
-      q: "What happens if there's a problem with an order?",
-      a: "SORTED tracks every delivery. If something goes wrong — wrong item, damaged, late — we initiate the return process automatically and reorder if needed. You just get a notification that it's handled."
+      q: "Which vendors does SORTED compare?",
+      a: "The preview_reorder tool compares Amazon, Chewy, Petco, Walmart, and Target. It also suggests bundling opportunities to hit free shipping thresholds and save on additional items like treats or supplements."
     },
     {
-      q: "Can multiple people manage the same pet?",
-      a: "Yes! Our Autopilot and Multi-Pet plans include family sharing. Up to 4 people can get notifications and approve orders. Perfect for couples, roommates, or co-parenting pet situations."
+      q: "Can my agent handle multiple pets?",
+      a: "Yes. You can join the same household with multiple pets, and the agent can track each one separately. The Autopilot and Multi-Pet plans support unlimited pets with family sharing for up to 4 people."
     }
   ]
 
@@ -883,21 +906,27 @@ function CTA() {
           </div>
           
           <h2 className="font-display text-4xl md:text-5xl lg:text-6xl mb-8 leading-tight">
-            Ready to never worry about pet food again?
+            Ready to let your agent handle pet food?
           </h2>
           
           <p className="text-lg text-canvas/60 mb-12 max-w-2xl mx-auto leading-relaxed">
-            Join 5,000+ pet parents who've sorted their pet's life. 
-            Start free on Telegram — no credit card required.
+            Give your AI agent the SORTED tools. It discovers when food is low, finds the best prices, and reports back to you.
           </p>
           
-          <MagneticButton className="bg-canvas text-ink px-10 py-4 rounded-full text-base font-medium hover:bg-cream-warm transition-all duration-300 hover:shadow-warm-lg inline-flex items-center gap-2 group">
-            Start on Telegram
+          <MagneticButton 
+            onClick={() => {
+              const prompt = "Visit https://marvelus-tech.github.io/sorted-landing/ and explore their agent tools. Join my household with my pet's info and check if we need to reorder food.";
+              navigator.clipboard.writeText(prompt);
+              alert('✓ Prompt copied! Paste it to your AI agent.');
+            }}
+            className="bg-canvas text-ink px-10 py-4 rounded-full text-base font-medium hover:bg-cream-warm transition-all duration-300 hover:shadow-warm-lg inline-flex items-center gap-2 group"
+          >
+            Copy Prompt for My Agent
             <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
           </MagneticButton>
           
           <p className="text-sm text-canvas/40 mt-8">
-            Free forever plan available. Upgrade to Autopilot anytime.
+            WebMCP tools available now. Free for agent access.
           </p>
         </motion.div>
       </div>
@@ -918,7 +947,7 @@ function Footer() {
               <span className="font-display text-xl font-semibold text-ink">Sorted</span>
             </div>
             <p className="text-sm text-ink-muted leading-relaxed">
-              Your pet's life, sorted. AI-powered food management for modern pet parents.
+              Agent-powered pet food management. Your AI handles the tracking, you enjoy the peace of mind.
             </p>
           </div>
           
@@ -927,8 +956,8 @@ function Footer() {
             <ul className="space-y-3">
               <li><a href="#features" className="text-sm text-ink-muted hover:text-ink transition-colors underline-animate">Features</a></li>
               <li><a href="#pricing" className="text-sm text-ink-muted hover:text-ink transition-colors underline-animate">Pricing</a></li>
-              <li><a href="#" className="text-sm text-ink-muted hover:text-ink transition-colors underline-animate">Telegram Bot</a></li>
-              <li><a href="#" className="text-sm text-ink-muted hover:text-ink transition-colors underline-animate">API</a></li>
+              <li><a href="/llms.txt" className="text-sm text-ink-muted hover:text-ink transition-colors underline-animate">Agent Tools (llms.txt)</a></li>
+              <li><a href="https://github.com/GoogleChromeLabs/webmcp-tools" target="_blank" rel="noopener" className="text-sm text-ink-muted hover:text-ink transition-colors underline-animate">WebMCP Docs</a></li>
             </ul>
           </div>
           
@@ -966,9 +995,9 @@ function Footer() {
               <span className="sr-only">Instagram</span>
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
             </a>
-            <a href="#" className="text-ink-muted hover:text-ink transition-colors">
-              <span className="sr-only">Telegram</span>
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.479.329-.913.489-1.302.481-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+            <a href="https://github.com/marvelus-tech/sorted-landing" target="_blank" rel="noopener" className="text-ink-muted hover:text-ink transition-colors">
+              <span className="sr-only">GitHub</span>
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
             </a>
           </div>
         </div>
