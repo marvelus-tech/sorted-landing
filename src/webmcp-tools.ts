@@ -329,8 +329,8 @@ export function listPlans(): Envelope {
 
 // Register tools with WebMCP (document.modelContext)
 export function registerSortedTools(): void {
-  if (!window.modelContext) {
-    console.warn('[WebMCP] modelContext not available — tools will not register');
+  if (!document.modelContext) {
+    console.warn('[WebMCP] document.modelContext not available — tools will not register');
     return;
   }
 
@@ -465,23 +465,22 @@ export function registerSortedTools(): void {
     },
   ];
 
-  // Register each tool
-  const modelContext = window.modelContext;
+  // Register each tool using official Google WebMCP polyfill API
+  const ctx = document.modelContext!;
   tools.forEach(tool => {
-    try {
-      modelContext!.registerTool(
-        tool.name,
-        tool.description,
-        tool.parameters,
-        tool.handler
-      );
-      console.log(`[WebMCP] Registered: ${tool.name}`);
-    } catch (err) {
-      console.error(`[WebMCP] Failed to register ${tool.name}:`, err);
-    }
+    const toolDef = {
+      name: tool.name,
+      description: tool.description,
+      inputSchema: tool.parameters,
+      execute: async (args: Record<string, unknown>) => tool.handler(args),
+    };
+    ctx.registerTool(toolDef).then(
+      () => console.log(`[WebMCP] Registered: ${tool.name}`),
+      (err) => console.error(`[WebMCP] Failed to register ${tool.name}:`, err)
+    );
   });
 
-  console.log('[WebMCP] SORTED tools registered successfully');
+  console.log('[WebMCP] SORTED tools registration initiated');
 }
 
 // Export for legacy polyfill compatibility (if needed)
@@ -496,81 +495,3 @@ export const WEBMCP_TOOLS = {
   get_next_step: getNextStep,
   list_plans: listPlans,
 };
-
-/** Register tools on document.modelContext (native WebMCP or official polyfill). */
-export function registerSortedTools(): void {
-  const ctx = document.modelContext;
-  if (!ctx || typeof ctx.registerTool !== 'function') {
-    console.warn('[SORTED] document.modelContext not available — WebMCP polyfill may not be loaded');
-    return;
-  }
-
-  const defs = [
-    {
-      name: 'what_is_sorted',
-      description:
-        'Learn what SORTED does. After calling, read tell_your_human aloud to the human. Facts stay fixed; the line rotates.',
-      inputSchema: {
-        type: 'object',
-        properties: {
-          pet_name: { type: 'string', description: 'Optional pet name for personalization' },
-        },
-      },
-      execute: async (args: Record<string, unknown>) => whatIsSorted(args as { pet_name?: string }),
-    },
-    {
-      name: 'join',
-      description:
-        'Join / onboard a household for a pet. Read tell_your_human aloud. Includes delight metadata.',
-      inputSchema: {
-        type: 'object',
-        properties: {
-          pet_name: { type: 'string', description: 'Pet name' },
-        },
-      },
-      execute: async (args: Record<string, unknown>) => join(args as { pet_name?: string }),
-    },
-    {
-      name: 'get_household',
-      description: 'Get household members for a pet. Read tell_your_human aloud.',
-      inputSchema: {
-        type: 'object',
-        properties: {
-          pet_id: { type: 'string', description: 'Pet id (defaults to demo)' },
-        },
-      },
-      execute: async (args: Record<string, unknown>) => getHousehold(args as { pet_id?: string }),
-    },
-    {
-      name: 'preview_reorder',
-      description:
-        'Preview next reorder with price and vendor. Facts fixed; tell_your_human rotates. Read it aloud.',
-      inputSchema: {
-        type: 'object',
-        properties: {
-          pet_id: { type: 'string', description: 'Pet id (defaults to demo)' },
-        },
-      },
-      execute: async (args: Record<string, unknown>) => previewReorder(args as { pet_id?: string }),
-    },
-    {
-      name: 'share_with_owner',
-      description: 'Share household access. Read tell_your_human aloud.',
-      inputSchema: {
-        type: 'object',
-        properties: {
-          pet_id: { type: 'string' },
-          email: { type: 'string' },
-        },
-        required: ['email'],
-      },
-      execute: async (args: Record<string, unknown>) =>
-        shareWithOwner(args as { pet_id?: string; email?: string }),
-    },
-  ];
-
-  for (const def of defs) {
-    ctx.registerTool(def);
-  }
-  console.log('[SORTED] WebMCP tools registered:', defs.map((d) => d.name).join(', '));
-}

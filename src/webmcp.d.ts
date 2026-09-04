@@ -1,27 +1,26 @@
-// WebMCP type definitions for SORTED
+// WebMCP type definitions for SORTED (Official Google WebMCP polyfill)
+
+interface Tool {
+  name: string;
+  description: string;
+  inputSchema?: {
+    type: 'object';
+    properties?: Record<string, unknown>;
+    required?: string[];
+  };
+  annotations?: Record<string, unknown>;
+  execute?: (args: Record<string, unknown>) => Promise<unknown> | unknown;
+}
 
 interface ModelContext {
-  registerTool(
-    name: string,
-    description: string,
-    parameters: {
-      type: 'object';
-      properties: Record<string, unknown>;
-      required?: string[];
-    },
-    handler: (args: Record<string, unknown>) => unknown
-  ): void;
+  registerTool(tool: Tool, options?: { signal?: AbortSignal }): Promise<void>;
+  ontoolchange: ((event: Event) => void) | null;
+}
+
+interface Document {
+  modelContext?: ModelContext;
 }
 
 interface Window {
-  modelContext?: ModelContext;
-  __webmcp?: {
-    version: string;
-    brand: string;
-    tools: Record<string, unknown>;
-    execute: (toolName: string, args: Record<string, unknown>) => unknown;
-    listTools: () => string[];
-    getTool: (name: string) => unknown;
-  };
-  __webmcp_loaded?: boolean;
+  __webmcp_registered_tools?: Map<string, Tool>;
 }
