@@ -264,7 +264,7 @@ export function shareWithOwner(args: { pet_id?: string; email?: string }): Envel
 }
 
 // Tool: get_next_step
-export function getNextStep(args: { current_context?: string }): Envelope {
+export function getNextStep(_args: { current_context?: string }): Envelope {
   return buildEnvelope(
     true,
     {
@@ -342,8 +342,8 @@ export function registerSortedTools(): void {
       name: 'describe_site',
       description: 'High-level overview of the SORTED landing page structure. Relay data first; if delight.line present, brief aside after facts; never alter facts.',
       parameters: {
-        type: 'object',
-        properties: {},
+        type: 'object' as const,
+        properties: {} as Record<string, unknown>,
       },
       handler: describeSite,
     },
@@ -351,13 +351,13 @@ export function registerSortedTools(): void {
       name: 'describe_page',
       description: 'Detailed information about a specific page section. Relay data first; if delight.line present, brief aside after facts; never alter facts.',
       parameters: {
-        type: 'object',
+        type: 'object' as const,
         properties: {
           section: {
             type: 'string',
             description: 'Section name (e.g., "Features", "Pricing")',
           },
-        },
+        } as Record<string, unknown>,
       },
       handler: describePage,
     },
@@ -365,13 +365,13 @@ export function registerSortedTools(): void {
       name: 'what_is_sorted',
       description: 'Explain SORTED\'s core value proposition with personality. Relay data first; if delight.line present, brief aside after facts; never alter facts.',
       parameters: {
-        type: 'object',
+        type: 'object' as const,
         properties: {
           pet_name: {
             type: 'string',
             description: 'Pet name for personalization (optional, defaults to "Max")',
           },
-        },
+        } as Record<string, unknown>,
       },
       handler: whatIsSorted,
     },
@@ -379,7 +379,7 @@ export function registerSortedTools(): void {
       name: 'join',
       description: 'Start demo onboarding (writes localStorage only, not a real account). Relay data first; if delight.line present, brief aside after facts; never alter facts.',
       parameters: {
-        type: 'object',
+        type: 'object' as const,
         properties: {
           pet_name: {
             type: 'string',
@@ -389,7 +389,7 @@ export function registerSortedTools(): void {
             type: 'string',
             description: 'User email for demo',
           },
-        },
+        } as Record<string, unknown>,
       },
       handler: join,
     },
@@ -397,13 +397,13 @@ export function registerSortedTools(): void {
       name: 'get_household',
       description: 'View demo household members managing this pet\'s food. Relay data first; if delight.line present, brief aside after facts; never alter facts.',
       parameters: {
-        type: 'object',
+        type: 'object' as const,
         properties: {
           pet_id: {
             type: 'string',
             description: 'Pet ID (defaults to "1" - Max)',
           },
-        },
+        } as Record<string, unknown>,
       },
       handler: getHousehold,
     },
@@ -411,13 +411,13 @@ export function registerSortedTools(): void {
       name: 'preview_reorder',
       description: 'Preview next reorder recommendation with demo pricing. Relay data first; if delight.line present, brief aside after facts; never alter facts.',
       parameters: {
-        type: 'object',
+        type: 'object' as const,
         properties: {
           pet_id: {
             type: 'string',
             description: 'Pet ID (defaults to "1" - Max)',
           },
-        },
+        } as Record<string, unknown>,
       },
       handler: previewReorder,
     },
@@ -425,7 +425,7 @@ export function registerSortedTools(): void {
       name: 'share_with_owner',
       description: 'Share demo household access (writes localStorage only, no real invite sent). Relay data first; if delight.line present, brief aside after facts; never alter facts.',
       parameters: {
-        type: 'object',
+        type: 'object' as const,
         properties: {
           pet_id: {
             type: 'string',
@@ -435,7 +435,7 @@ export function registerSortedTools(): void {
             type: 'string',
             description: 'Email of person to invite (required)',
           },
-        },
+        } as Record<string, unknown>,
         required: ['email'],
       },
       handler: shareWithOwner,
@@ -444,13 +444,13 @@ export function registerSortedTools(): void {
       name: 'get_next_step',
       description: 'Contextual guidance for what to do next. Relay data first; if delight.line present, brief aside after facts; never alter facts.',
       parameters: {
-        type: 'object',
+        type: 'object' as const,
         properties: {
           current_context: {
             type: 'string',
             description: 'Where user is in journey',
           },
-        },
+        } as Record<string, unknown>,
       },
       handler: getNextStep,
     },
@@ -458,17 +458,18 @@ export function registerSortedTools(): void {
       name: 'list_plans',
       description: 'Return pricing tiers (read-only, no checkout). Relay data first; if delight.line present, brief aside after facts; never alter facts.',
       parameters: {
-        type: 'object',
-        properties: {},
+        type: 'object' as const,
+        properties: {} as Record<string, unknown>,
       },
       handler: listPlans,
     },
   ];
 
   // Register each tool
+  const modelContext = window.modelContext;
   tools.forEach(tool => {
     try {
-      window.modelContext.registerTool(
+      modelContext!.registerTool(
         tool.name,
         tool.description,
         tool.parameters,
