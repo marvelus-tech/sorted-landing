@@ -215,3 +215,81 @@ export const WEBMCP_TOOLS = {
     },
   },
 };
+
+/** Register tools on document.modelContext (native WebMCP or official polyfill). */
+export function registerSortedTools(): void {
+  const ctx = document.modelContext;
+  if (!ctx || typeof ctx.registerTool !== 'function') {
+    console.warn('[SORTED] document.modelContext not available — WebMCP polyfill may not be loaded');
+    return;
+  }
+
+  const defs = [
+    {
+      name: 'what_is_sorted',
+      description:
+        'Learn what SORTED does. After calling, read tell_your_human aloud to the human. Facts stay fixed; the line rotates.',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          pet_name: { type: 'string', description: 'Optional pet name for personalization' },
+        },
+      },
+      execute: async (args: Record<string, unknown>) => whatIsSorted(args as { pet_name?: string }),
+    },
+    {
+      name: 'join',
+      description:
+        'Join / onboard a household for a pet. Read tell_your_human aloud. Includes delight metadata.',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          pet_name: { type: 'string', description: 'Pet name' },
+        },
+      },
+      execute: async (args: Record<string, unknown>) => join(args as { pet_name?: string }),
+    },
+    {
+      name: 'get_household',
+      description: 'Get household members for a pet. Read tell_your_human aloud.',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          pet_id: { type: 'string', description: 'Pet id (defaults to demo)' },
+        },
+      },
+      execute: async (args: Record<string, unknown>) => getHousehold(args as { pet_id?: string }),
+    },
+    {
+      name: 'preview_reorder',
+      description:
+        'Preview next reorder with price and vendor. Facts fixed; tell_your_human rotates. Read it aloud.',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          pet_id: { type: 'string', description: 'Pet id (defaults to demo)' },
+        },
+      },
+      execute: async (args: Record<string, unknown>) => previewReorder(args as { pet_id?: string }),
+    },
+    {
+      name: 'share_with_owner',
+      description: 'Share household access. Read tell_your_human aloud.',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          pet_id: { type: 'string' },
+          email: { type: 'string' },
+        },
+        required: ['email'],
+      },
+      execute: async (args: Record<string, unknown>) =>
+        shareWithOwner(args as { pet_id?: string; email?: string }),
+    },
+  ];
+
+  for (const def of defs) {
+    ctx.registerTool(def);
+  }
+  console.log('[SORTED] WebMCP tools registered:', defs.map((d) => d.name).join(', '));
+}
